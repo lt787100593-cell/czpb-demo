@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>支持成效分析 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .effect-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 18px 20px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      border-top: 3px solid var(--gray-200);
+    }
+    .effect-card.primary { border-top-color: var(--primary); }
+    .effect-card.blue { border-top-color: var(--blue); }
+    .effect-card.orange { border-top-color: var(--orange); }
+    .effect-card.purple { border-top-color: var(--purple); }
+    .ec-val { font-size: 32px; font-weight: 800; color: var(--gray-800); }
+    .ec-val .unit { font-size: 14px; font-weight: 400; color: var(--gray-400); }
+    .ec-label { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+    .ec-change { font-size: 12px; margin-top: 6px; }
+
+    .college-effect-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .college-effect-item:last-child { border-bottom: none; }
+    .cei-name { width: 100px; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
+    .cei-bars { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .cei-bar-row { display: flex; align-items: center; gap: 6px; }
+    .cei-bar-tag { width: 36px; font-size: 10px; color: var(--gray-400); }
+    .cei-bar-wrap { flex: 1; height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
+    .cei-bar-fill { height: 100%; border-radius: 4px; }
+    .cei-val { width: 36px; font-size: 11px; font-weight: 600; text-align: right; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="dean" data-active="effect-analysis"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <a href="college-analysis.html" style="color:inherit;text-decoration:none;">学院分析</a>
+        <span>›</span>
+        <span class="current-page">支持成效分析</span>
+      </div>
+      <div class="topbar-actions">
+        <select class="filter-select"><option>2024-2025上学期</option><option>2023-2024下学期</option></select>
+        <select class="filter-select"><option>全部专题</option><option>学业进展</option><option>生活规律</option></select>
+        <button class="btn btn-outline btn-sm" onclick="showToast('已导出成效报告','success')">导出报告</button>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- 总体KPI -->
+      <div class="stat-grid grid-4 section-gap">
+        <div class="effect-card primary">
+          <div class="ec-val">78<span class="unit">人</span></div>
+          <div class="ec-label">当前重点关注总规模</div>
+          <div class="ec-change" style="color:var(--orange);">↑ 较学期初 +6</div>
+        </div>
+        <div class="effect-card blue">
+          <div class="ec-val">34<span class="unit">人</span></div>
+          <div class="ec-label">状态改善对象（本学期）</div>
+          <div class="ec-change" style="color:var(--primary-dark);">改善率 43.6%</div>
+        </div>
+        <div class="effect-card orange">
+          <div class="ec-val">28<span class="unit">人</span></div>
+          <div class="ec-label">持续关注中</div>
+          <div class="ec-change" style="color:var(--gray-400);">跟踪中，未明显变化</div>
+        </div>
+        <div class="effect-card purple">
+          <div class="ec-val">16<span class="unit">人</span></div>
+          <div class="ec-label">本学期新增</div>
+          <div class="ec-change" style="color:var(--orange);">↑ 新增识别</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 规模趋势 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📈</span>重点关注规模趋势
+            <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">2024年10月 — 2025年3月</span>
+          </div>
+          <div id="line-effect" style="width:100%;height:180px;background:var(--gray-50);border-radius:8px;overflow:visible;"></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:6px;">
+            <div style="display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--gray-600);">
+              <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:3px;background:#3b82f6;display:inline-block;border-radius:2px;"></span>关注总规模</span>
+              <span style="display:flex;align-items:center;gap:5px;"><span style="width:14px;height:3px;background:#2ecc87;display:inline-block;border-radius:2px;"></span>已改善对象</span>
+            </div>
+          </div>
+          <div class="alert alert-success" style="margin-top:12px;margin-bottom:0;padding:8px 10px;">
+            <span>📊</span><span style="font-size:12px;">改善对象持续增长，已从10月的20人增长到3月的34人，改善趋势向好。</span>
+          </div>
+        </div>
+
+        <!-- 各专题改善情况 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">✅</span>各专题改善情况
+            <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">本学期内状态好转人数</span>
+          </div>
+          <div id="effect-bar"></div>
+          <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--gray-100);">
+            <div style="font-size:11px;color:var(--gray-400);margin-bottom:10px;">各专题改善率对比</div>
+            <div style="display:flex;flex-direction:column;gap:6px;">
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+                <span style="color:var(--gray-600);">学业进展</span>
+                <span style="display:flex;align-items:center;gap:6px;">
+                  <span style="color:var(--gray-400);">12/20人好转</span>
+                  <span class="tag tag-green" style="font-size:10px;">60%</span>
+                </span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+                <span style="color:var(--gray-600);">生活规律</span>
+                <span style="display:flex;align-items:center;gap:6px;">
+                  <span style="color:var(--gray-400);">10/18人好转</span>
+                  <span class="tag tag-green" style="font-size:10px;">56%</span>
+                </span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+                <span style="color:var(--gray-600);">新生适应</span>
+                <span style="display:flex;align-items:center;gap:6px;">
+                  <span style="color:var(--gray-400);">8/24人好转</span>
+                  <span class="tag tag-orange" style="font-size:10px;">33%</span>
+                </span>
+              </div>
+              <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;">
+                <span style="color:var(--gray-600);">校园融入</span>
+                <span style="display:flex;align-items:center;gap:6px;">
+                  <span style="color:var(--gray-400);">4/16人好转</span>
+                  <span class="tag tag-orange" style="font-size:10px;">25%</span>
+                </span>
+              </div>
+            </div>
+          </div>
+          <div class="hint-text" style="margin-top:8px;">改善人数以辅导员复核结果为准，不作为绩效考核依据。</div>
+        </div>
+      </div>
+
+      <!-- 学院/辅导员对比 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">🏫</span>各辅导员支持覆盖对比</div>
+        <div class="college-effect-item">
+          <div class="cei-name">李老师</div>
+          <div class="cei-bars">
+            <div class="cei-bar-row"><div class="cei-bar-tag">负责</div><div class="cei-bar-wrap"><div class="cei-bar-fill" style="width:68%;background:var(--primary);"></div></div><div class="cei-val" style="color:var(--accent);">18人</div></div>
+            <div class="cei-bar-row"><div class="cei-bar-tag">改善</div><div class="cei-bar-wrap"><div class="cei-bar-fill" style="width:50%;background:var(--blue);"></div></div><div class="cei-val" style="color:var(--blue);">9人</div></div>
+          </div>
+          <div><span class="tag tag-green">改善率 50%</span></div>
+        </div>
+        <div class="college-effect-item">
+          <div class="cei-name">陈老师</div>
+          <div class="cei-bars">
+            <div class="cei-bar-row"><div class="cei-bar-tag">负责</div><div class="cei-bar-wrap"><div class="cei-bar-fill" style="width:76%;background:var(--primary);"></div></div><div class="cei-val" style="color:var(--accent);">20人</div></div>
+            <div class="cei-bar-row"><div class="cei-bar-tag">改善</div><div class="cei-bar-wrap"><div class="cei-bar-fill" style="width:38%;background:var(--blue);"></div></div><div class="cei-val" style="color:var(--blue);">10人</div></div>
+          </div>
+          <div><span class="tag tag-green">改善率 50%</span></div>
+        </div>
+        <div class="college-effect-item">
+          <div class="cei-name">张老师</div>
+          <div class="cei-bars">
+            <div class="cei-bar-row"><div class="cei-bar-tag">负责</div><div class="cei-bar-wrap"><div class="cei-bar-fill" style="width:60%;background:var(--primary);"></div></div><div class="cei-val" style="color:var(--accent);">16人</div></div>
+            <div class="cei-bar-row"><div class="cei-bar-tag">改善</div><div class="cei-bar-wrap"><div class="cei-bar-fill" style="width:30%;background:var(--blue);"></div></div><div class="cei-val" style="color:var(--blue);">8人</div></div>
+          </div>
+          <div><span class="tag tag-green">改善率 50%</span></div>
+        </div>
+        <div class="college-effect-item">
+          <div class="cei-name">刘老师</div>
+          <div class="cei-bars">
+            <div class="cei-bar-row"><div class="cei-bar-tag">负责</div><div class="cei-bar-wrap"><div class="cei-bar-fill" style="width:52%;background:var(--primary);"></div></div><div class="cei-val" style="color:var(--accent);">14人</div></div>
+            <div class="cei-bar-row"><div class="cei-bar-tag">改善</div><div class="cei-bar-wrap"><div class="cei-bar-fill" style="width:26%;background:var(--blue);"></div></div><div class="cei-val" style="color:var(--blue);">7人</div></div>
+          </div>
+          <div><span class="tag tag-blue">改善率 50%</span></div>
+        </div>
+        <div class="hint-text" style="margin-top:8px;">改善率基于辅导员跟进记录中"状态好转"标记计算，供内部参考使用，不作为绩效考核依据。</div>
+      </div>
+
+      <!-- 改善案例 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">💡</span>状态改善情况摘要</div>
+        <div class="grid-3">
+          <div style="padding:14px;border:1px solid var(--primary-mid);border-radius:var(--radius-sm);background:var(--primary-light);">
+            <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px;">学业进展改善（12人）</div>
+            <div style="font-size:12px;color:var(--gray-600);">约60%的学业关注对象在一个月内出现成绩或出勤好转。挂科风险学生中8人已完成补考，状态恢复正常。</div>
+          </div>
+          <div style="padding:14px;border:1px solid var(--primary-mid);border-radius:var(--radius-sm);background:var(--primary-light);">
+            <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px;">生活规律改善（10人）</div>
+            <div style="font-size:12px;color:var(--gray-600);">作息规律波动学生中约57%在4周内恢复正常规律，宿管与辅导员联动关注效果较好。</div>
+          </div>
+          <div style="padding:14px;border:1px solid var(--primary-mid);border-radius:var(--radius-sm);background:var(--primary-light);">
+            <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px;">新生适应改善（8人）</div>
+            <div style="font-size:12px;color:var(--gray-600);">经班级活动引导后，约1/3新生适应关注对象出现课堂参与和活动参与的显著提升。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 说明 -->
+      <div class="alert alert-info">
+        <span>ℹ️</span>
+        <span>本页面基于学生在校数据的变化趋势进行分析，改善判断以辅导员复核结果和数据变化为综合依据，用于辅助评估支持工作覆盖情况，不替代正式绩效评价。</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  drawInteractiveLineChart('line-effect',
+    [
+      { name: '关注总规模', color: '#3b82f6', values: [72, 76, 82, 78, 76, 78] },
+      { name: '已改善对象', color: '#2ecc87', values: [20, 24, 28, 30, 32, 34] },
+    ],
+    ['10月', '11月', '12月', '1月', '2月', '3月'],
+    { height: 180 }
+  );
+  drawBarChart('effect-bar', [
+    { label: '学业进展改善', value: 12 },
+    { label: '生活规律改善', value: 10 },
+    { label: '新生适应改善', value: 8 },
+    { label: '校园融入改善', value: 4 },
+  ], 15, '#2ecc87');
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>专题分析 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .topic-nav {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .topic-btn {
+      padding: 7px 16px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      border: 1.5px solid var(--gray-200);
+      background: #fff;
+      color: var(--gray-600);
+      transition: var(--transition);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .topic-btn:hover { border-color: var(--primary); color: var(--accent); }
+    .topic-btn.active { background: var(--primary); border-color: var(--primary); color: #fff; }
+    .topic-btn .tc { font-size: 11px; background: rgba(255,255,255,0.3); padding: 1px 5px; border-radius: 10px; }
+    .topic-btn.active .tc { background: rgba(255,255,255,0.3); }
+    .topic-btn:not(.active) .tc { background: var(--gray-100); color: var(--gray-500); }
+
+    .reason-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      cursor: pointer;
+      border: 1px solid var(--gray-200);
+      background: #fff;
+      margin: 3px;
+      transition: var(--transition);
+    }
+    .reason-tag:hover { border-color: var(--primary); }
+    .reason-tag .rt-count { font-weight: 700; color: var(--gray-800); }
+    .reason-tag .rt-pct { color: var(--gray-400); }
+
+    .mini-list-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--gray-100);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .mini-list-item:last-child { border-bottom: none; }
+    .mini-list-item:hover { background: var(--gray-50); margin: 0 -16px; padding: 9px 16px; border-radius: var(--radius-sm); }
+    .mli-rank { width: 22px; height: 22px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--gray-500); flex-shrink: 0; }
+    .mli-rank.top { background: var(--orange-light); color: var(--orange); }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="dean" data-active="topic-analysis"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <a href="college-analysis.html" style="color:inherit;text-decoration:none;">学院分析</a>
+        <span>›</span>
+        <span class="current-page">专题分析</span>
+      </div>
+      <div class="topbar-actions">
+        <select class="filter-select"><option>全院</option><option>软件工程</option><option>计算机科学</option></select>
+        <select class="filter-select"><option>2024-2025上学期</option></select>
+        <button class="btn btn-outline btn-sm" onclick="showToast('已导出专题分析报告','success')">导出报告</button>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- 专题切换 -->
+      <div class="topic-nav" id="topic-nav">
+        <button class="topic-btn active" onclick="switchTopic(this,'study')">📚 学业进展 <span class="tc">42</span></button>
+        <button class="topic-btn" onclick="switchTopic(this,'life')">🏠 生活规律 <span class="tc">28</span></button>
+        <button class="topic-btn" onclick="switchTopic(this,'support')">💰 保障支持 <span class="tc">18</span></button>
+        <button class="topic-btn" onclick="switchTopic(this,'new')">🌱 新生适应 <span class="tc">24</span></button>
+        <button class="topic-btn" onclick="switchTopic(this,'campus')">🎯 校园融入 <span class="tc">16</span></button>
+        <button class="topic-btn" onclick="switchTopic(this,'grad')">🎓 毕业阶段 <span class="tc">9</span></button>
+        <button class="topic-btn" onclick="switchTopic(this,'talent')">⭐ 优势培育 <span class="tc">56</span></button>
+      </div>
+
+      <!-- 专题内容 -->
+      <div id="topic-content">
+        <!-- 学业进展专题（默认） -->
+        <div>
+          <div class="alert alert-info" style="margin-bottom:16px;">
+            <span>📚</span>
+            <span><strong>学业进展关注专题</strong>：当前涉及学业进展支持需求的学生共 42 人，占全院 6.6%。较上学期增加 4 人，主要集中在大三年级。</span>
+          </div>
+
+          <!-- KPI -->
+          <div class="stat-grid grid-4 section-gap">
+            <div class="stat-card blue">
+              <div class="stat-label">当前关注人数</div>
+              <div class="stat-value">42<span class="unit">人</span></div>
+              <div class="stat-change down">↑ 较上月+4</div>
+            </div>
+            <div class="stat-card orange">
+              <div class="stat-label">挂科风险</div>
+              <div class="stat-value">18<span class="unit">人</span></div>
+              <div class="stat-change neutral">1门以上挂科风险</div>
+            </div>
+            <div class="stat-card red">
+              <div class="stat-label">毕业风险</div>
+              <div class="stat-value">9<span class="unit">人</span></div>
+              <div class="stat-change neutral">大四毕业要求不足</div>
+            </div>
+            <div class="stat-card green">
+              <div class="stat-label">近期改善</div>
+              <div class="stat-value">8<span class="unit">人</span></div>
+              <div class="stat-change up">↑ 较上月好转</div>
+            </div>
+          </div>
+
+          <div class="grid-2 section-gap">
+            <!-- 原因拆解 -->
+            <div class="card">
+              <div class="card-title"><span class="title-icon">🔍</span>主要原因拆解</div>
+              <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:14px;">
+                <div class="reason-tag"><span class="rt-count">18</span>挂科风险<span class="rt-pct">42%</span></div>
+                <div class="reason-tag"><span class="rt-count">16</span>成绩连续下滑<span class="rt-pct">38%</span></div>
+                <div class="reason-tag"><span class="rt-count">14</span>修读进度偏慢<span class="rt-pct">33%</span></div>
+                <div class="reason-tag"><span class="rt-count">12</span>出勤率下降<span class="rt-pct">29%</span></div>
+                <div class="reason-tag"><span class="rt-count">9</span>毕业达成不足<span class="rt-pct">21%</span></div>
+              </div>
+              <div id="reason-bar"></div>
+            </div>
+
+            <!-- 分布分析 -->
+            <div class="card">
+              <div class="card-title"><span class="title-icon">📊</span>专业 / 年级分布
+                <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">按学业进展关注人数统计</span>
+              </div>
+              <div class="tabs-container">
+                <div class="tabs">
+                  <div class="tab-item">按专业分布</div>
+                  <div class="tab-item">按年级分布</div>
+                </div>
+                <div class="tab-panel">
+                  <div id="major-dist"></div>
+                  <div class="hint-text" style="margin-top:8px;">软件工程专业学业关注人数占比最高（16人/38%），建议重点开展针对性学业支持。</div>
+                </div>
+                <div class="tab-panel">
+                  <div id="grade-dist"></div>
+                  <div class="hint-text" style="margin-top:8px;">大三年级（2022级）学业关注人数最多，与专业课程难度加大密切相关。</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid-2 section-gap">
+            <!-- 趋势 -->
+            <div class="card">
+              <div class="card-title">
+                <span class="title-icon">📈</span>关注规模趋势
+                <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">近6个月 · 悬停查看详情</span>
+              </div>
+
+              <!-- Mini KPI 行：当前/峰值/同比 -->
+              <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px;">
+                <div style="background:var(--blue-light);border-radius:8px;padding:10px 12px;border:1px solid #bfdbfe;">
+                  <div style="font-size:10px;color:#1d4ed8;margin-bottom:2px;">本月关注</div>
+                  <div style="font-size:20px;font-weight:800;color:#1e40af;line-height:1;">42<span style="font-size:11px;font-weight:400;margin-left:2px;">人</span></div>
+                  <div style="font-size:10px;color:#3b82f6;margin-top:2px;">↑ 较上月 +4</div>
+                </div>
+                <div style="background:#fef9c3;border-radius:8px;padding:10px 12px;border:1px solid #fde68a;">
+                  <div style="font-size:10px;color:#92400e;margin-bottom:2px;">学期峰值</div>
+                  <div style="font-size:20px;font-weight:800;color:#78350f;line-height:1;">46<span style="font-size:11px;font-weight:400;margin-left:2px;">人</span></div>
+                  <div style="font-size:10px;color:#d97706;margin-top:2px;">📍 12月（期末前）</div>
+                </div>
+                <div style="background:var(--primary-light);border-radius:8px;padding:10px 12px;border:1px solid var(--primary-mid);">
+                  <div style="font-size:10px;color:var(--primary-dark);margin-bottom:2px;">同比上学期</div>
+                  <div style="font-size:20px;font-weight:800;color:var(--accent);line-height:1;">+10%<span style="font-size:10px;font-weight:400;"></span></div>
+                  <div style="font-size:10px;color:var(--primary-dark);margin-top:2px;">↑ 关注规模略扩大</div>
+                </div>
+              </div>
+
+              <!-- 折线图主体 -->
+              <div id="line-topic" style="width:100%;height:160px;background:var(--gray-50);border-radius:8px;overflow:visible;"></div>
+
+              <!-- 图例 -->
+              <div style="display:flex;gap:16px;margin-top:8px;font-size:12px;color:var(--gray-500);flex-wrap:wrap;align-items:center;">
+                <span style="display:flex;align-items:center;gap:5px;">
+                  <svg width="20" height="8" style="flex-shrink:0;"><line x1="0" y1="4" x2="20" y2="4" stroke="#3b82f6" stroke-width="2.5" stroke-linecap="round"/><circle cx="10" cy="4" r="3" fill="#3b82f6"/></svg>
+                  本学期
+                </span>
+                <span style="display:flex;align-items:center;gap:5px;">
+                  <svg width="20" height="8" style="flex-shrink:0;"><line x1="0" y1="4" x2="20" y2="4" stroke="#9ca3af" stroke-width="2" stroke-dasharray="4,3" stroke-linecap="round"/></svg>
+                  上学期同期
+                </span>
+                <span style="margin-left:auto;font-size:11px;color:var(--gray-400);">10月—3月</span>
+              </div>
+
+              <!-- 趋势解读 -->
+              <div style="margin-top:12px;border-top:1px solid var(--gray-100);padding-top:10px;display:flex;flex-direction:column;gap:7px;">
+                <div style="font-size:11px;font-weight:600;color:var(--gray-600);margin-bottom:2px;">📊 趋势解读</div>
+                <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;">
+                  <span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:#fef3c7;display:inline-flex;align-items:center;justify-content:center;font-size:10px;">⚠</span>
+                  <span style="color:var(--gray-600);">12月出现<strong style="color:var(--orange);">峰值46人</strong>，与期末考试临近高度相关，属正常学期规律</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;">
+                  <span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:#dbeafe;display:inline-flex;align-items:center;justify-content:center;font-size:10px;">↑</span>
+                  <span style="color:var(--gray-600);">本学期整体高于上学期同期，需关注<strong style="color:#1d4ed8;">成绩连续下滑</strong>的持续性风险</span>
+                </div>
+                <div style="display:flex;align-items:flex-start;gap:8px;font-size:12px;">
+                  <span style="flex-shrink:0;width:18px;height:18px;border-radius:50%;background:#d1fae5;display:inline-flex;align-items:center;justify-content:center;font-size:10px;">✓</span>
+                  <span style="color:var(--gray-600);">1月后关注人数回落，说明<strong style="color:var(--accent);">学期中段</strong>部分学生已有改善，干预有效</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 重点对象 -->
+            <div class="card">
+              <div class="card-title"><span class="title-icon">👥</span>重点关注对象（前10）
+                <span class="title-extra" onclick="location.href='counselor-list.html'">查看完整名单 →</span>
+              </div>
+              <div class="mini-list-item">
+                <div class="mli-rank top">1</div>
+                <div class="student-avatar" style="width:28px;height:28px;font-size:12px;">李</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:600;">李同学 <span class="tag tag-red" style="font-size:10px;">高度关注</span></div>
+                  <div style="font-size:11px;color:var(--gray-400);">软件3班 · 成绩下滑+修读滞后</div>
+                </div>
+                <a href="student-detail.html" class="btn btn-sm btn-outline">查看</a>
+              </div>
+              <div class="mini-list-item">
+                <div class="mli-rank top">2</div>
+                <div class="student-avatar" style="width:28px;height:28px;font-size:12px;background:linear-gradient(135deg,#3b82f6,#1d4ed8);">郑</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:600;">郑同学 <span class="tag tag-orange" style="font-size:10px;">持续关注</span></div>
+                  <div style="font-size:11px;color:var(--gray-400);">计算机2班 · 挂科风险+出勤偏低</div>
+                </div>
+                <a href="student-detail.html" class="btn btn-sm btn-outline">查看</a>
+              </div>
+              <div class="mini-list-item">
+                <div class="mli-rank top">3</div>
+                <div class="student-avatar" style="width:28px;height:28px;font-size:12px;background:linear-gradient(135deg,#8b5cf6,#6d28d9);">吴</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:600;">吴同学 <span class="tag tag-orange" style="font-size:10px;">持续关注</span></div>
+                  <div style="font-size:11px;color:var(--gray-400);">软件4班 · 毕业达成率偏低</div>
+                </div>
+                <a href="student-detail.html" class="btn btn-sm btn-outline">查看</a>
+              </div>
+              <div class="mini-list-item">
+                <div class="mli-rank">4</div>
+                <div class="student-avatar" style="width:28px;height:28px;font-size:12px;background:linear-gradient(135deg,#f59e0b,#d97706);">马</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:600;">马同学 <span class="tag tag-blue" style="font-size:10px;">一般关注</span></div>
+                  <div style="font-size:11px;color:var(--gray-400);">数据科学1班 · 修读进度偏慢</div>
+                </div>
+                <a href="student-detail.html" class="btn btn-sm btn-outline">查看</a>
+              </div>
+              <div class="mini-list-item">
+                <div class="mli-rank">5</div>
+                <div class="student-avatar" style="width:28px;height:28px;font-size:12px;background:linear-gradient(135deg,#06b6d4,#0284c7);">林</div>
+                <div style="flex:1;">
+                  <div style="font-size:13px;font-weight:600;">林同学 <span class="tag tag-blue" style="font-size:10px;">一般关注</span></div>
+                  <div style="font-size:11px;color:var(--gray-400);">信息管理2班 · 成绩阶段性下滑</div>
+                </div>
+                <a href="student-detail.html" class="btn btn-sm btn-outline">查看</a>
+              </div>
+              <div style="text-align:center;margin-top:12px;">
+                <a href="counselor-list.html" class="btn btn-outline btn-sm">查看全部42人名单</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-title"><span class="title-icon">💡</span>专题支持建议
+              <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">以下建议供辅导员参考，需结合实际情况判断</span>
+            </div>
+            <div class="grid-3" style="margin-bottom:12px;">
+              <div style="padding:14px;border:1px solid #fecaca;border-radius:var(--radius-sm);background:var(--red-light);">
+                <div style="font-weight:600;font-size:13px;margin-bottom:6px;color:var(--red);">🚨 毕业风险（9人）</div>
+                <div style="font-size:12px;color:var(--gray-600);line-height:1.7;">建议辅导员逐一约谈，结合培养方案核查缺失学分，制定补修计划，必要时联动教务协助处理学分认定事项。</div>
+                <div style="margin-top:8px;font-size:11px;color:var(--red);">⏰ 建议本周内完成初步摸排</div>
+              </div>
+              <div style="padding:14px;border:1px solid #fed7aa;border-radius:var(--radius-sm);background:var(--orange-light);">
+                <div style="font-weight:600;font-size:13px;margin-bottom:6px;color:var(--orange);">⚠ 挂科风险（18人）</div>
+                <div style="font-size:12px;color:var(--gray-600);line-height:1.7;">建议在期末前2-4周开展集中关怀，推荐学院或任课教师的答疑资源，协助督促学习节奏调整。</div>
+                <div style="margin-top:8px;font-size:11px;color:var(--orange);">📅 距期末考试约4周，时间较紧</div>
+              </div>
+              <div style="padding:14px;border:1px solid #bfdbfe;border-radius:var(--radius-sm);background:var(--blue-light);">
+                <div style="font-weight:600;font-size:13px;margin-bottom:6px;color:var(--blue);">📋 出勤偏低（12人）</div>
+                <div style="font-size:12px;color:var(--gray-600);line-height:1.7;">建议优先了解出勤下降学生的近期状态，关注是否存在学习情绪波动，可通过宿管、同学等多渠道了解。</div>
+                <div style="margin-top:8px;font-size:11px;color:var(--blue);">🔍 出勤异常与学业风险高度相关</div>
+              </div>
+            </div>
+            <div class="hint-text">以上数据来源于教务、学工、课堂系统等，建议辅导员结合学生实际情况综合研判，不建议直接将数据与学生对话，避免引起不必要的心理压力。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+const topicInfo = {
+  study: { title:'学业进展关注专题', count:42, pct:'6.6%', icon:'📚', alertColor:'info' },
+  life: { title:'生活规律波动专题', count:28, pct:'4.4%', icon:'🏠', alertColor:'warn' },
+  support: { title:'生活保障支持专题', count:18, pct:'2.8%', icon:'💰', alertColor:'info' },
+  new: { title:'新生适应关注专题', count:24, pct:'14.1%（大一）', icon:'🌱', alertColor:'info' },
+  campus: { title:'校园融入不足专题', count:16, pct:'2.5%', icon:'🎯', alertColor:'warn' },
+  grad: { title:'毕业阶段关注专题', count:9, pct:'5.2%（大四）', icon:'🎓', alertColor:'warn' },
+  talent: { title:'优势发展培育专题', count:56, pct:'8.9%', icon:'⭐', alertColor:'success' },
+};
+
+function switchTopic(btn, type) {
+  document.querySelectorAll('.topic-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const t = topicInfo[type];
+  showToast('已切换至：' + t.title, 'info');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  drawBarChart('reason-bar', [
+    { label: '挂科风险', value: 18 },
+    { label: '成绩连续下滑', value: 16 },
+    { label: '修读进度偏慢', value: 14 },
+    { label: '出勤率下降', value: 12 },
+    { label: '毕业达成不足', value: 9 },
+  ], 25, '#3b82f6');
+
+  drawBarChart('major-dist', [
+    { label: '软件工程（16人）', value: 16 },
+    { label: '计算机科学（12人）', value: 12 },
+    { label: '数据科学（8人）', value: 8 },
+    { label: '信息管理（6人）', value: 6 },
+  ], 20, '#8b5cf6');
+
+  drawBarChart('grade-dist', [
+    { label: '2021级-大四（9人）', value: 9 },
+    { label: '2022级-大三（14人）', value: 14 },
+    { label: '2023级-大二（12人）', value: 12 },
+    { label: '2024级-大一（7人）', value: 7 },
+  ], 20, '#2ecc87');
+
+  drawInteractiveLineChart('line-topic',
+    [
+      { name: '本学期', color: '#3b82f6', values: [36, 38, 44, 40, 38, 42] },
+      { name: '上学期同期', color: '#9ca3af', values: [32, 34, 38, 36, 34, 38] },
+    ],
+    ['10月', '11月', '12月', '1月', '2月', '3月'],
+    { height: 160 }
+  );
+});
+</script>
+</body>
+</html>

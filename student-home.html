@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>成长首页 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .welcome-banner {
+      background: linear-gradient(135deg, #1a7f5c 0%, #2ecc87 100%);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-bottom: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .welcome-banner::before {
+      content: '🌱';
+      position: absolute;
+      right: 28px; top: 50%;
+      transform: translateY(-50%);
+      font-size: 64px;
+      opacity: 0.2;
+    }
+    .welcome-info .name { font-size: 22px; font-weight: 700; }
+    .welcome-info .meta { font-size: 13px; opacity: 0.85; margin-top: 4px; }
+    .welcome-info .tags { margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap; }
+    .welcome-tag {
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      font-size: 12px;
+      padding: 3px 10px;
+      border-radius: 20px;
+    }
+    .radar-wrap {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+    .radar-legend {
+      flex: 1;
+      min-width: 0;
+    }
+    .radar-legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px 0;
+      font-size: 13px;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .radar-legend-item:last-child { border-bottom: none; }
+    .radar-legend-item .dim-name { color: var(--gray-600); display: flex; align-items: center; gap: 6px; }
+    .radar-legend-item .dim-val { font-weight: 700; color: var(--gray-800); font-size: 14px; }
+    .radar-legend-bar { height: 4px; border-radius: 2px; margin-top: 2px; background: var(--primary); opacity: 0.3; }
+    .remind-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .remind-item:last-child { border-bottom: none; }
+    .remind-icon {
+      width: 30px; height: 30px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+    .remind-icon.warn { background: var(--orange-light); }
+    .remind-icon.info { background: var(--blue-light); }
+    .remind-icon.green { background: var(--primary-light); }
+    .remind-text { font-size: 13px; color: var(--gray-700); flex: 1; }
+    .remind-time { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+    .rec-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .rec-card:hover { border-color: var(--primary); box-shadow: 0 2px 8px rgba(46,204,135,0.1); }
+    .rec-type { font-size: 11px; color: var(--gray-400); margin-bottom: 4px; }
+    .rec-title { font-size: 13px; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
+    .rec-reason { font-size: 12px; color: var(--primary-dark); }
+    .event-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .event-item:last-child { border-bottom: none; }
+    .event-date { font-size: 12px; color: var(--gray-400); width: 56px; flex-shrink: 0; }
+    .event-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: var(--primary);
+      flex-shrink: 0;
+    }
+    .event-text { font-size: 13px; color: var(--gray-700); }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="student" data-active="student-home"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <span>🏠</span>
+        <span class="current-page">成长首页</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date">2025年03月26日 周三</span>
+        <span class="topbar-bell" onclick="showToast('你有3条新提醒', 'info')">🔔</span>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- 欢迎条 -->
+      <div class="welcome-banner">
+        <div class="welcome-info" style="flex:1;">
+          <div class="name">你好，张同学 👋</div>
+          <div class="meta">信息工程学院 · 软件工程专业 · 2023级 · 大二上学期</div>
+          <div class="tags">
+            <span class="welcome-tag">🎯 学业稳定</span>
+            <span class="welcome-tag">📈 稳中有进</span>
+            <span class="welcome-tag">💡 建议加强活动参与</span>
+          </div>
+        </div>
+        <!-- 综合等级展示 -->
+        <div style="background:rgba(255,255,255,0.18);border-radius:14px;padding:16px 22px;text-align:center;flex-shrink:0;border:1px solid rgba(255,255,255,0.25);min-width:90px;">
+          <div style="font-size:11px;color:rgba(255,255,255,0.75);margin-bottom:4px;">综合成长等级</div>
+          <div style="font-size:40px;font-weight:800;color:#fff;line-height:1;">B<sup style="font-size:20px;">+</sup></div>
+          <div style="font-size:10px;color:rgba(255,255,255,0.65);margin-top:4px;">较上学期提升</div>
+        </div>
+      </div>
+
+      <!-- 指标卡 -->
+      <div class="stat-grid grid-5 section-gap">
+        <div class="stat-card green">
+          <div class="stat-label">综合成长等级</div>
+          <div class="stat-value">B<span class="unit">+</span></div>
+          <div class="stat-change up">↑ 较上学期提升</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">已修学分</div>
+          <div class="stat-value">58<span class="unit">分</span></div>
+          <div class="stat-change neutral">进度 78%</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-label">当前绩点</div>
+          <div class="stat-value">3.42</div>
+          <div class="stat-change up">↑ 专业前 30%</div>
+        </div>
+        <div class="stat-card green" style="--primary:#8b5cf6;">
+          <div class="stat-label">第二课堂</div>
+          <div class="stat-value">18<span class="unit">学时</span></div>
+          <div class="stat-change neutral" style="color:var(--orange);">建议适当增加</div>
+        </div>
+        <div class="stat-card red">
+          <div class="stat-label">近期提醒</div>
+          <div class="stat-value">3<span class="unit">条</span></div>
+          <div class="stat-change down">需关注</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 五育雷达 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">⭐</span>五育成长概览 <span class="title-extra" onclick="location.href='student-wuyu.html'">查看详情 →</span></div>
+          <div class="radar-wrap">
+            <svg id="radar-main" width="220" height="220" viewBox="0 0 220 220" style="overflow:visible;"></svg>
+            <div class="radar-legend">
+              <div class="radar-legend-item"><span class="dim-name"><span style="color:var(--primary);font-size:10px;">●</span> 德育表现</span><span class="dim-val">82</span></div>
+              <div class="radar-legend-item"><span class="dim-name"><span style="color:#3b82f6;font-size:10px;">●</span> 智育发展</span><span class="dim-val" style="color:#3b82f6;">88</span></div>
+              <div class="radar-legend-item"><span class="dim-name"><span style="color:#f59e0b;font-size:10px;">●</span> 体育健康</span><span class="dim-val" style="color:#f59e0b;">65</span></div>
+              <div class="radar-legend-item"><span class="dim-name"><span style="color:#8b5cf6;font-size:10px;">●</span> 美育参与</span><span class="dim-val" style="color:#8b5cf6;">58</span></div>
+              <div class="radar-legend-item"><span class="dim-name"><span style="color:#06b6d4;font-size:10px;">●</span> 劳育实践</span><span class="dim-val" style="color:#06b6d4;">76</span></div>
+              <div style="margin-top:8px;font-size:11px;color:var(--gray-400);background:var(--gray-50);border-radius:6px;padding:5px 8px;">💡 体育和美育仍有提升空间</div>
+            </div>
+          </div>
+          <div class="alert alert-info" style="margin-top:12px;margin-bottom:0;">
+            <span>💡</span>
+            <span>体育和美育仍有提升空间，建议适当参与运动和文化活动。</span>
+          </div>
+        </div>
+
+        <!-- 近期提醒 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">🔔</span>近期提醒 <span class="title-extra" onclick="location.href='student-remind.html'">查看全部 →</span></div>
+          <div class="remind-item">
+            <div class="remind-icon warn">📚</div>
+            <div>
+              <div class="remind-text">《数据库原理》本周进入阶段测试，请提前复习第3—5章内容</div>
+              <div class="remind-time">2025-03-25 · 学业提醒</div>
+            </div>
+          </div>
+          <div class="remind-item">
+            <div class="remind-icon info">🏃</div>
+            <div>
+              <div class="remind-text">近两周运动记录有所下降，建议保持每周至少2次规律锻炼</div>
+              <div class="remind-time">2025-03-24 · 生活提醒</div>
+            </div>
+          </div>
+          <div class="remind-item">
+            <div class="remind-icon green">🎯</div>
+            <div>
+              <div class="remind-text">第二课堂学分累计进度偏慢，建议关注近期校园活动</div>
+              <div class="remind-time">2025-03-22 · 发展提醒</div>
+            </div>
+          </div>
+          <div style="text-align:center;margin-top:14px;">
+            <a href="student-remind.html" class="btn btn-outline btn-sm">查看全部提醒与推荐</a>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 个性化推荐 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">💡</span>为你推荐</div>
+          <div class="grid-2" style="gap:10px;">
+            <div class="rec-card">
+              <div class="rec-type">📘 学业支持</div>
+              <div class="rec-title">高等数学薄弱章节专题讲解</div>
+              <div class="rec-reason">基于你当前学业进度推荐</div>
+            </div>
+            <div class="rec-card">
+              <div class="rec-type">🏃 体育健康</div>
+              <div class="rec-title">本周校园跑活动（周四下午）</div>
+              <div class="rec-reason">建议增加运动频率</div>
+            </div>
+            <div class="rec-card">
+              <div class="rec-type">🎨 美育参与</div>
+              <div class="rec-title">学院艺术社团招新开放日</div>
+              <div class="rec-reason">美育维度有提升空间</div>
+            </div>
+            <div class="rec-card">
+              <div class="rec-type">🌟 发展规划</div>
+              <div class="rec-title">大二职业规划入门讲座</div>
+              <div class="rec-reason">当前阶段建议提前了解</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 成长事件 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📅</span>本月成长记录</div>
+          <div class="event-item">
+            <div class="event-date">03-04</div>
+            <div class="event-dot"></div>
+            <div class="event-text">参加学院志愿服务活动（2学时）</div>
+          </div>
+          <div class="event-item">
+            <div class="event-date">03-08</div>
+            <div class="event-dot" style="background:var(--blue);"></div>
+            <div class="event-text">完成英语四级模拟测试，成绩: 482分</div>
+          </div>
+          <div class="event-item">
+            <div class="event-date">03-13</div>
+            <div class="event-dot"></div>
+            <div class="event-text">图书馆到馆学习3次，借阅1本参考书</div>
+          </div>
+          <div class="event-item">
+            <div class="event-date">03-18</div>
+            <div class="event-dot" style="background:var(--orange);"></div>
+            <div class="event-text">收到课程阶段学习提醒（数据库原理）</div>
+          </div>
+          <div class="event-item">
+            <div class="event-date">03-24</div>
+            <div class="event-dot"></div>
+            <div class="event-text">参加班级主题团日活动</div>
+          </div>
+          <div class="event-item">
+            <div class="event-date">03-26</div>
+            <div class="event-dot" style="background:var(--purple);"></div>
+            <div class="event-text">完成本学期第3次体育课程，成绩良好</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 说明 -->
+      <div style="background:var(--primary-light);border-radius:var(--radius);padding:14px 18px;display:flex;align-items:flex-start;gap:12px;border:1px solid var(--primary-mid);">
+        <div style="font-size:18px;flex-shrink:0;">🌱</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--accent);margin-bottom:3px;">关于本平台数据</div>
+          <div style="font-size:12px;color:var(--gray-600);line-height:1.7;">本页面展示内容用于支持个人成长与发展建议，数据来源于学校教务、学工、一卡通、图书馆等各业务系统，仅供参考，不作为任何正式评价结论。如对数据有疑问，请联系辅导员。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  drawRadar('radar-main', ['德育', '智育', '体育', '美育', '劳育'],
+    [82, 88, 65, 58, 76], '#2ecc87');
+});
+</script>
+</body>
+</html>

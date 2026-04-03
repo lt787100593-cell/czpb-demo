@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>五育评价 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .wuyu-overview {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 28px;
+      align-items: center;
+    }
+    .wuyu-dim-cards {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .wuyu-dim-card {
+      border-radius: var(--radius);
+      padding: 18px 14px;
+      text-align: center;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: var(--transition);
+    }
+    .wuyu-dim-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+    .wuyu-dim-card.active { border-color: currentColor; }
+    .wuyu-dim-card .dim-emoji { font-size: 28px; margin-bottom: 8px; }
+    .wuyu-dim-card .dim-title { font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+    .wuyu-dim-card .dim-score { font-size: 24px; font-weight: 800; }
+    .wuyu-dim-card .dim-level { font-size: 11px; margin-top: 4px; }
+
+    .dim-card-de { background: #fef9c3; color: #854d0e; }
+    .dim-card-zhi { background: #d1fae5; color: #065f46; }
+    .dim-card-ti { background: #fee2e2; color: #991b1b; }
+    .dim-card-mei { background: #ede9fe; color: #4c1d95; }
+    .dim-card-lao { background: #dbeafe; color: #1e3a8a; }
+
+    .indicator-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .indicator-row:last-child { border-bottom: none; }
+    .indicator-name { width: 120px; font-size: 13px; color: var(--gray-600); flex-shrink: 0; }
+    .indicator-bar-wrap { flex: 1; }
+    .indicator-score { width: 40px; text-align: right; font-size: 13px; font-weight: 600; color: var(--gray-800); }
+    .indicator-source { width: 100px; font-size: 11px; color: var(--gray-400); text-align: right; flex-shrink: 0; }
+
+    .trend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .trend-item:last-child { border-bottom: none; }
+    .trend-term { width: 120px; font-size: 13px; color: var(--gray-600); }
+    .trend-scores {
+      flex: 1;
+      display: flex;
+      gap: 8px;
+    }
+    .trend-score-item {
+      text-align: center;
+      flex: 1;
+    }
+    .trend-score-item .ts-label { font-size: 10px; color: var(--gray-400); }
+    .trend-score-item .ts-val { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+
+    .compare-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+    }
+    .compare-label { width: 60px; font-size: 12px; color: var(--gray-500); text-align: right; }
+    .compare-bar-wrap { flex: 1; height: 10px; background: var(--gray-100); border-radius: 5px; overflow: hidden; }
+    .compare-bar-fill { height: 100%; border-radius: 5px; }
+    .compare-val { width: 36px; font-size: 12px; font-weight: 600; color: var(--gray-800); }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="student" data-active="student-wuyu"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <a href="student-home.html" style="color:inherit;text-decoration:none;">🏠 首页</a>
+        <span>›</span>
+        <span class="current-page">五育评价</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date">2025年03月26日</span>
+        <select class="filter-select">
+          <option>2024-2025上学期</option>
+          <option>2023-2024下学期</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- 五育维度卡 -->
+      <div class="wuyu-dim-cards">
+        <div class="wuyu-dim-card dim-card-de active" onclick="switchDim(0)">
+          <div class="dim-emoji">🌟</div>
+          <div class="dim-title">德育表现</div>
+          <div class="dim-score">82</div>
+          <div class="dim-level">良好</div>
+        </div>
+        <div class="wuyu-dim-card dim-card-zhi" onclick="switchDim(1)">
+          <div class="dim-emoji">📚</div>
+          <div class="dim-title">智育发展</div>
+          <div class="dim-score">88</div>
+          <div class="dim-level">较优</div>
+        </div>
+        <div class="wuyu-dim-card dim-card-ti" onclick="switchDim(2)">
+          <div class="dim-emoji">🏃</div>
+          <div class="dim-title">体育健康</div>
+          <div class="dim-score">65</div>
+          <div class="dim-level">待提升</div>
+        </div>
+        <div class="wuyu-dim-card dim-card-mei" onclick="switchDim(3)">
+          <div class="dim-emoji">🎨</div>
+          <div class="dim-title">美育参与</div>
+          <div class="dim-score">58</div>
+          <div class="dim-level">待提升</div>
+        </div>
+        <div class="wuyu-dim-card dim-card-lao" onclick="switchDim(4)">
+          <div class="dim-emoji">🤝</div>
+          <div class="dim-title">劳育实践</div>
+          <div class="dim-score">76</div>
+          <div class="dim-level">良好</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 雷达图 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📡</span>五育综合雷达
+            <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">满分100分</span>
+          </div>
+          <div class="wuyu-overview">
+            <svg id="radar-wuyu" width="230" height="230" viewBox="0 0 230 230" style="overflow:visible;"></svg>
+            <div style="flex:1;">
+              <div style="margin-bottom:16px;padding:12px;background:var(--primary-light);border-radius:10px;border:1px solid var(--primary-mid);">
+                <div style="font-size:11px;color:var(--gray-500);margin-bottom:4px;">综合成长等级</div>
+                <div style="font-size:34px;font-weight:800;color:var(--accent);line-height:1;">B<sup style="font-size:18px;">+</sup></div>
+                <div style="font-size:12px;color:var(--primary-dark);margin-top:4px;">较上学期提升 ↑</div>
+              </div>
+              <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:8px;">与同专业均值对比</div>
+              <div class="compare-bar">
+                <div class="compare-label" style="color:var(--accent);">本人</div>
+                <div class="compare-bar-wrap"><div class="compare-bar-fill" style="width:74%;background:var(--primary);"></div></div>
+                <div class="compare-val" style="color:var(--accent);">74</div>
+              </div>
+              <div class="compare-bar">
+                <div class="compare-label">专业均</div>
+                <div class="compare-bar-wrap"><div class="compare-bar-fill" style="width:69%;background:var(--blue);"></div></div>
+                <div class="compare-val">69</div>
+              </div>
+              <div class="compare-bar">
+                <div class="compare-label">学院均</div>
+                <div class="compare-bar-wrap"><div class="compare-bar-fill" style="width:67%;background:var(--gray-300);"></div></div>
+                <div class="compare-val">67</div>
+              </div>
+              <div style="font-size:12px;color:var(--primary-dark);margin-top:8px;padding:6px 8px;background:var(--primary-light);border-radius:6px;">↑ 本人综合得分高于专业均值 5 分</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 学期趋势 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📈</span>近三学期变化趋势</div>
+          <!-- 可交互折线图 -->
+          <div id="wuyu-trend-chart" style="width:100%;height:220px;position:relative;"></div>
+          <div style="display:flex;gap:14px;margin-top:6px;flex-wrap:wrap;padding:0 4px;">
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500);cursor:pointer;" onclick="toggleTrendLine(0)"><span style="width:16px;height:3px;background:#2ecc87;display:inline-block;border-radius:2px;"></span>德育</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500);cursor:pointer;" onclick="toggleTrendLine(1)"><span style="width:16px;height:3px;background:#3b82f6;display:inline-block;border-radius:2px;"></span>智育</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500);cursor:pointer;" onclick="toggleTrendLine(2)"><span style="width:16px;height:3px;background:#ef4444;display:inline-block;border-radius:2px;"></span>体育</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500);cursor:pointer;" onclick="toggleTrendLine(3)"><span style="width:16px;height:3px;background:#8b5cf6;display:inline-block;border-radius:2px;"></span>美育</span>
+            <span style="display:flex;align-items:center;gap:5px;font-size:11px;color:var(--gray-500);cursor:pointer;" onclick="toggleTrendLine(4)"><span style="width:16px;height:3px;background:#f59e0b;display:inline-block;border-radius:2px;"></span>劳育</span>
+            <span style="margin-left:auto;font-size:11px;color:var(--gray-400);">点击图例可显隐维度</span>
+          </div>
+          <!-- 各学期数值汇总 -->
+          <div style="margin-top:12px;border-top:1px solid var(--gray-100);padding-top:10px;">
+            <div style="display:grid;grid-template-columns:auto repeat(5,1fr);gap:0;font-size:11px;">
+              <div style="padding:5px 8px;color:var(--gray-400);font-weight:600;"></div>
+              <div style="padding:5px 4px;text-align:center;color:var(--gray-400);font-weight:600;">德育</div>
+              <div style="padding:5px 4px;text-align:center;color:var(--gray-400);font-weight:600;">智育</div>
+              <div style="padding:5px 4px;text-align:center;color:var(--gray-400);font-weight:600;">体育</div>
+              <div style="padding:5px 4px;text-align:center;color:var(--gray-400);font-weight:600;">美育</div>
+              <div style="padding:5px 4px;text-align:center;color:var(--gray-400);font-weight:600;">劳育</div>
+
+              <div style="padding:5px 8px;color:var(--gray-600);border-top:1px solid var(--gray-100);">2023年第1学期</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--gray-700);border-top:1px solid var(--gray-100);">72</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--gray-700);border-top:1px solid var(--gray-100);">80</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--orange);border-top:1px solid var(--gray-100);">72</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--orange);border-top:1px solid var(--gray-100);">50</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--gray-700);border-top:1px solid var(--gray-100);">65</div>
+
+              <div style="padding:5px 8px;color:var(--gray-600);border-top:1px solid var(--gray-100);">2023年第2学期</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--gray-700);border-top:1px solid var(--gray-100);">78</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--gray-700);border-top:1px solid var(--gray-100);">84</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--orange);border-top:1px solid var(--gray-100);">68</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--orange);border-top:1px solid var(--gray-100);">55</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:600;color:var(--gray-700);border-top:1px solid var(--gray-100);">72</div>
+
+              <div style="padding:5px 8px;color:var(--accent);font-weight:600;border-top:1px solid var(--gray-100);background:var(--primary-light);border-radius:4px 0 0 4px;">2024年第1学期</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:700;color:#2ecc87;border-top:1px solid var(--gray-100);background:var(--primary-light);">82</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:700;color:#3b82f6;border-top:1px solid var(--gray-100);background:var(--primary-light);">88</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:700;color:var(--orange);border-top:1px solid var(--gray-100);background:var(--primary-light);">65</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:700;color:var(--orange);border-top:1px solid var(--gray-100);background:var(--primary-light);">58</div>
+              <div style="padding:5px 4px;text-align:center;font-weight:700;color:#f59e0b;border-top:1px solid var(--gray-100);background:var(--primary-light);border-radius:0 4px 4px 0;">76</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 维度详情 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">🔍</span>维度指标详情
+          <span style="font-size:12px;font-weight:400;color:var(--gray-400);margin-left:8px;">点击上方维度卡切换</span>
+        </div>
+        <div id="dim-detail">
+          <!-- 德育详情（默认） -->
+          <div class="alert alert-success" style="margin-bottom:12px;">
+            <span>🌟</span>
+            <span><strong>德育表现</strong>：综合表现良好，在集体活动和志愿服务方面有较稳定的参与。建议适当增加社区服务频次。</span>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-name">志愿服务</div>
+            <div class="indicator-bar-wrap"><div class="progress-bar"><div class="progress-fill green" style="width:80%"></div></div></div>
+            <div class="indicator-score">80</div>
+            <div class="indicator-source">第二课堂系统</div>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-name">集体活动参与</div>
+            <div class="indicator-bar-wrap"><div class="progress-bar"><div class="progress-fill green" style="width:85%"></div></div></div>
+            <div class="indicator-score">85</div>
+            <div class="indicator-source">团委系统</div>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-name">荣誉表现</div>
+            <div class="indicator-bar-wrap"><div class="progress-bar"><div class="progress-fill blue" style="width:90%"></div></div></div>
+            <div class="indicator-score">90</div>
+            <div class="indicator-source">学工系统</div>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-name">诚信记录</div>
+            <div class="indicator-bar-wrap"><div class="progress-bar"><div class="progress-fill green" style="width:100%"></div></div></div>
+            <div class="indicator-score">100</div>
+            <div class="indicator-source">教务/学工</div>
+          </div>
+          <div class="indicator-row">
+            <div class="indicator-name">奖惩情况</div>
+            <div class="indicator-bar-wrap"><div class="progress-bar"><div class="progress-fill blue" style="width:85%"></div></div></div>
+            <div class="indicator-score">85</div>
+            <div class="indicator-source">学工系统</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 提升建议 -->
+      <div class="card">
+        <div class="card-title"><span class="title-icon">💡</span>五育提升建议</div>
+        <div class="grid-3">
+          <div style="padding:12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);">
+            <div style="font-size:12px;font-weight:600;color:var(--orange);margin-bottom:6px;">🏃 体育（待提升）</div>
+            <div style="font-size:12px;color:var(--gray-600);">建议每周参加校园跑或体育课外锻炼至少2次，可关注场馆预约系统。</div>
+          </div>
+          <div style="padding:12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);">
+            <div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:6px;">🎨 美育（待提升）</div>
+            <div style="font-size:12px;color:var(--gray-600);">建议参加学院或校级文艺活动，可关注艺术社团和美育选修课程。</div>
+          </div>
+          <div style="padding:12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);">
+            <div style="font-size:12px;font-weight:600;color:var(--accent);margin-bottom:6px;">✅ 整体建议</div>
+            <div style="font-size:12px;color:var(--gray-600);">保持当前智育优势和德育稳定，重点补强体育和美育，逐步形成更均衡的成长结构。</div>
+          </div>
+        </div>
+      </div>
+
+      <div style="background:var(--blue-light);border-radius:var(--radius);padding:14px 18px;margin-top:16px;display:flex;gap:12px;align-items:flex-start;border:1px solid #bfdbfe;">
+        <div style="font-size:18px;flex-shrink:0;">ℹ️</div>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:#1e40af;margin-bottom:3px;">关于五育评价的说明</div>
+          <div style="font-size:12px;color:#1e3a8a;line-height:1.7;">五育评价旨在展示学生成长结构与发展趋势，帮助学生了解自身在德智体美劳各维度的发展状态，不替代正式评优、评奖或纪律处分依据。各维度权重由学校统一配置，数据每月更新一次，如有疑问请联系辅导员。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+const dimData = [
+  {
+    name: '德育表现', color: '#854d0e', alert: '🌟 德育表现：综合表现良好，在集体活动和志愿服务方面有较稳定的参与。建议适当增加社区服务频次。',
+    alertClass: 'alert-success',
+    indicators: [
+      { name: '志愿服务', val: 80, source: '第二课堂' },
+      { name: '集体活动参与', val: 85, source: '团委系统' },
+      { name: '荣誉表现', val: 90, source: '学工系统' },
+      { name: '诚信记录', val: 100, source: '教务/学工' },
+      { name: '奖惩情况', val: 85, source: '学工系统' },
+    ]
+  },
+  {
+    name: '智育发展', color: '#065f46', alert: '📚 智育发展：学业成绩稳定，绩点3.42，修读进度正常。图书馆学习投入较高，建议继续保持。',
+    alertClass: 'alert-success',
+    indicators: [
+      { name: '学业成绩', val: 88, source: '教务系统' },
+      { name: '修读进度', val: 85, source: '教务系统' },
+      { name: '图书馆投入', val: 82, source: '图书馆系统' },
+      { name: '课堂出勤', val: 95, source: '考勤系统' },
+      { name: '课程参与度', val: 80, source: '学习平台' },
+    ]
+  },
+  {
+    name: '体育健康', color: '#991b1b', alert: '🏃 体育健康：近两周运动频次有所下降，体育课程成绩良好，但课外锻炼不足。建议保持规律锻炼。',
+    alertClass: 'alert-warn',
+    indicators: [
+      { name: '体测成绩', val: 72, source: '体育部门' },
+      { name: '体育课成绩', val: 80, source: '教务系统' },
+      { name: '课外锻炼', val: 45, source: '场馆/校园跑' },
+      { name: '运动规律性', val: 50, source: '行为数据' },
+    ]
+  },
+  {
+    name: '美育参与', color: '#4c1d95', alert: '🎨 美育参与：本学期仅参与1次文化活动，美育课程尚未选修。建议关注校园文艺活动和艺术选修课。',
+    alertClass: 'alert-warn',
+    indicators: [
+      { name: '艺术课程', val: 40, source: '教务系统' },
+      { name: '文艺活动', val: 55, source: '团委系统' },
+      { name: '文化参与', val: 60, source: '活动平台' },
+    ]
+  },
+  {
+    name: '劳育实践', color: '#1e3a8a', alert: '🤝 劳育实践：本学期参与了1次社会实践和多次志愿活动，劳育表现良好。建议持续积累实践经历。',
+    alertClass: 'alert-success',
+    indicators: [
+      { name: '劳动教育', val: 80, source: '劳教平台' },
+      { name: '社会实践', val: 72, source: '实践平台' },
+      { name: '志愿劳动', val: 78, source: '第二课堂' },
+      { name: '勤工助学', val: 0, source: '资助系统' },
+    ]
+  }
+];
+
+const dimCards = document.querySelectorAll('.wuyu-dim-card');
+
+function switchDim(idx) {
+  dimCards.forEach((c, i) => c.classList.toggle('active', i === idx));
+  const d = dimData[idx];
+  const det = document.getElementById('dim-detail');
+  const colorClass = d.alertClass;
+  det.innerHTML = `
+    <div class="alert ${colorClass}" style="margin-bottom:12px;">
+      <span></span>
+      <span>${d.alert}</span>
+    </div>
+    ${d.indicators.map(ind => `
+      <div class="indicator-row">
+        <div class="indicator-name">${ind.name}</div>
+        <div class="indicator-bar-wrap"><div class="progress-bar"><div class="progress-fill ${ind.val >= 75 ? 'green' : ind.val >= 55 ? 'blue' : 'orange'}" style="width:${ind.val}%"></div></div></div>
+        <div class="indicator-score">${ind.val}</div>
+        <div class="indicator-source">${ind.source}</div>
+      </div>
+    `).join('')}
+  `;
+}
+
+// ---- 五育趋势折线图（真实可交互） ----
+const wuyuTrendData = {
+  labels: ['2023年第1学期', '2023年第2学期', '2024年第1学期'],
+  series: [
+    { name: '德育', color: '#2ecc87', values: [72, 78, 82], visible: true },
+    { name: '智育', color: '#3b82f6', values: [80, 84, 88], visible: true },
+    { name: '体育', color: '#ef4444', values: [72, 68, 65], visible: true },
+    { name: '美育', color: '#8b5cf6', values: [50, 55, 58], visible: true },
+    { name: '劳育', color: '#f59e0b', values: [65, 72, 76], visible: true },
+  ]
+};
+
+function toggleTrendLine(idx) {
+  wuyuTrendData.series[idx].visible = !wuyuTrendData.series[idx].visible;
+  renderWuyuTrendChart();
+}
+
+function renderWuyuTrendChart() {
+  const container = document.getElementById('wuyu-trend-chart');
+  if (!container) return;
+  const W = container.clientWidth || 400;
+  const H = 220;
+  const pad = { top: 20, right: 20, bottom: 48, left: 44 };
+  const gW = W - pad.left - pad.right;
+  const gH = H - pad.top - pad.bottom;
+  const labels = wuyuTrendData.labels;
+  const n = labels.length;
+
+  // 计算Y轴范围
+  const allVals = wuyuTrendData.series.filter(s => s.visible).flatMap(s => s.values);
+  const minV = allVals.length ? Math.max(0, Math.min(...allVals) - 10) : 0;
+  const maxV = allVals.length ? Math.min(100, Math.max(...allVals) + 10) : 100;
+
+  const xPos = i => pad.left + (n === 1 ? gW / 2 : (gW / (n - 1)) * i);
+  const yPos = v => pad.top + gH - ((v - minV) / (maxV - minV || 1)) * gH;
+
+  // 网格线
+  const yTicks = 4;
+  let gridSvg = '';
+  for (let t = 0; t <= yTicks; t++) {
+    const v = minV + (maxV - minV) * t / yTicks;
+    const y = yPos(v);
+    gridSvg += `<line x1="${pad.left}" y1="${y}" x2="${W - pad.right}" y2="${y}" stroke="#f3f4f6" stroke-width="1"/>`;
+    gridSvg += `<text x="${pad.left - 5}" y="${y + 4}" text-anchor="end" font-size="10" fill="#9ca3af">${Math.round(v)}</text>`;
+  }
+
+  // X轴标签（斜排以防重叠）
+  let xLabelsSvg = '';
+  labels.forEach((lb, i) => {
+    const x = xPos(i);
+    const y = H - pad.bottom + 16;
+    xLabelsSvg += `<text x="${x}" y="${y}" text-anchor="middle" font-size="11" fill="#6b7280">${lb}</text>`;
+  });
+
+  // 轴线
+  const axesSvg = `<line x1="${pad.left}" y1="${pad.top}" x2="${pad.left}" y2="${pad.top + gH}" stroke="#e5e7eb" stroke-width="1"/>
+    <line x1="${pad.left}" y1="${pad.top + gH}" x2="${W - pad.right}" y2="${pad.top + gH}" stroke="#e5e7eb" stroke-width="1"/>`;
+
+  // 数据线 & 点
+  let linesSvg = '';
+  // tooltip 数据（存入 data-属性）
+  const tooltipData = [];
+  wuyuTrendData.series.forEach((s, si) => {
+    if (!s.visible) return;
+    const pts = s.values.map((v, i) => `${xPos(i)},${yPos(v)}`).join(' ');
+    // 面积渐变
+    const areaPath = `M${xPos(0)},${yPos(s.values[0])} ` +
+      s.values.map((v, i) => `L${xPos(i)},${yPos(v)}`).slice(1).join(' ') +
+      ` L${xPos(n - 1)},${pad.top + gH} L${xPos(0)},${pad.top + gH} Z`;
+    linesSvg += `<path d="${areaPath}" fill="${s.color}" fill-opacity="0.07"/>`;
+    linesSvg += `<polyline points="${pts}" fill="none" stroke="${s.color}" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>`;
+    s.values.forEach((v, i) => {
+      const cx = xPos(i), cy = yPos(v);
+      linesSvg += `<circle class="trend-dot" cx="${cx}" cy="${cy}" r="5" fill="${s.color}" stroke="#fff" stroke-width="2"
+        data-label="${labels[i]}" data-name="${s.name}" data-val="${v}" data-color="${s.color}"
+        onmouseenter="showWuyuTooltip(event,this)" onmouseleave="hideWuyuTooltip()"/>`;
+    });
+  });
+
+  container.innerHTML = `
+    <svg width="${W}" height="${H}" style="overflow:visible;display:block;">
+      ${gridSvg}${axesSvg}${xLabelsSvg}${linesSvg}
+    </svg>
+    <div id="wuyu-tooltip" style="display:none;position:fixed;background:#fff;border:1px solid #e5e7eb;border-radius:8px;padding:8px 12px;box-shadow:0 4px 16px rgba(0,0,0,0.12);font-size:12px;pointer-events:none;z-index:999;min-width:120px;"></div>
+  `;
+}
+
+function showWuyuTooltip(e, dot) {
+  const tip = document.getElementById('wuyu-tooltip');
+  if (!tip) return;
+  const lbl = dot.getAttribute('data-label');
+  const name = dot.getAttribute('data-name');
+  const val = dot.getAttribute('data-val');
+  const color = dot.getAttribute('data-color');
+  tip.innerHTML = `<div style="font-size:11px;color:#6b7280;margin-bottom:4px;">${lbl}</div>
+    <div style="display:flex;align-items:center;gap:6px;">
+      <span style="width:10px;height:10px;border-radius:50%;background:${color};display:inline-block;"></span>
+      <span style="font-weight:600;color:#1f2937;">${name}</span>
+      <span style="margin-left:auto;font-size:14px;font-weight:800;color:${color};">${val}</span>
+    </div>`;
+  tip.style.display = 'block';
+  tip.style.left = (e.clientX + 12) + 'px';
+  tip.style.top = (e.clientY - 36) + 'px';
+}
+
+function hideWuyuTooltip() {
+  const tip = document.getElementById('wuyu-tooltip');
+  if (tip) tip.style.display = 'none';
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  drawRadar('radar-wuyu', ['德育', '智育', '体育', '美育', '劳育'],
+    [82, 88, 65, 58, 76], '#2ecc87');
+  renderWuyuTrendChart();
+  // 窗口缩放时重绘
+  window.addEventListener('resize', () => {
+    clearTimeout(window._wuyuResizeTimer);
+    window._wuyuResizeTimer = setTimeout(renderWuyuTrendChart, 150);
+  });
+});
+</script>
+</body>
+</html>

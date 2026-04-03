@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>学业发展 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .academic-hero {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .academic-kpi {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      border-top: 3px solid var(--primary);
+    }
+    .academic-kpi.warn { border-top-color: var(--orange); }
+    .academic-kpi.good { border-top-color: var(--blue); }
+    .akpi-val { font-size: 26px; font-weight: 800; color: var(--gray-800); }
+    .akpi-val .unit { font-size: 13px; font-weight: 400; color: var(--gray-400); }
+    .akpi-label { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+    .akpi-change { font-size: 11px; margin-top: 4px; }
+
+    .course-row td { font-size: 13px; }
+    .score-bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .score-bar-wrap { flex: 1; height: 6px; background: var(--gray-100); border-radius: 3px; overflow: hidden; min-width: 60px; }
+    .score-bar-fill { height: 100%; border-radius: 3px; }
+
+    .invest-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .invest-item:last-child { border-bottom: none; }
+    .invest-icon { font-size: 20px; width: 36px; height: 36px; background: var(--gray-50); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .invest-label { font-size: 13px; color: var(--gray-700); flex: 1; }
+    .invest-val { font-size: 14px; font-weight: 600; color: var(--gray-800); }
+    .invest-trend { font-size: 11px; color: var(--gray-400); }
+
+    .grad-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .grad-item:last-child { border-bottom: none; }
+    .grad-name { font-size: 13px; color: var(--gray-700); width: 108px; flex-shrink: 0; }
+    .grad-status { font-size: 12px; }
+
+    .suggest-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+      align-items: flex-start;
+    }
+    .suggest-item:last-child { border-bottom: none; }
+    .suggest-icon { width: 28px; height: 28px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="student" data-active="student-academic"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <a href="student-home.html" style="color:inherit;text-decoration:none;">🏠 首页</a>
+        <span>›</span>
+        <span class="current-page">学业发展</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date">2025年03月26日</span>
+        <select class="filter-select">
+          <option>2024-2025上学期（当前）</option>
+          <option>2023-2024下学期</option>
+          <option>2023-2024上学期</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- KPI -->
+      <div class="academic-hero">
+        <div class="academic-kpi">
+          <div class="akpi-val">3.42</div>
+          <div class="akpi-label">当前绩点(GPA)</div>
+          <div class="akpi-change" style="color:var(--primary-dark);">↑ 较上学期 +0.08</div>
+        </div>
+        <div class="academic-kpi good">
+          <div class="akpi-val">78<span class="unit">%</span></div>
+          <div class="akpi-label">学分修读进度</div>
+          <div class="akpi-change" style="color:var(--blue);">已修 58 / 应修 74 学分</div>
+        </div>
+        <div class="academic-kpi">
+          <div class="akpi-val">0<span class="unit">门</span></div>
+          <div class="akpi-label">当前挂科</div>
+          <div class="akpi-change" style="color:var(--primary-dark);">✅ 无挂科</div>
+        </div>
+        <div class="academic-kpi">
+          <div class="akpi-val">前30<span class="unit">%</span></div>
+          <div class="akpi-label">专业排名区间</div>
+          <div class="akpi-change" style="color:var(--primary-dark);">↑ 上升3名</div>
+        </div>
+        <div class="academic-kpi warn">
+          <div class="akpi-val">62<span class="unit">%</span></div>
+          <div class="akpi-label">毕业要求达成率</div>
+          <div class="akpi-change" style="color:var(--orange);">部分模块待完成</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 绩点趋势 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📈</span>绩点变化趋势</div>
+          <div style="background:var(--gray-50);border-radius:8px;padding:10px 12px;">
+            <div id="line-gpa" style="width:100%;height:150px;overflow:visible;"></div>
+            <div style="display:flex;gap:16px;margin-top:4px;font-size:11px;color:var(--gray-500);">
+              <span style="display:flex;align-items:center;gap:5px;"><span style="width:16px;height:3px;background:var(--primary);display:inline-block;border-radius:2px;"></span>本人绩点</span>
+              <span style="display:flex;align-items:center;gap:5px;"><span style="width:16px;height:3px;background:var(--blue);display:inline-block;border-radius:2px;"></span>专业均值</span>
+              <span style="margin-left:auto;font-size:11px;color:var(--gray-400);">3个学期对比</span>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:12px;">
+            <div style="text-align:center;padding:8px;background:var(--gray-50);border-radius:8px;">
+              <div style="font-size:10px;color:var(--gray-400);margin-bottom:2px;">23-24上</div>
+              <div style="font-size:18px;font-weight:700;color:var(--gray-700);">3.28</div>
+            </div>
+            <div style="text-align:center;padding:8px;background:var(--gray-50);border-radius:8px;">
+              <div style="font-size:10px;color:var(--gray-400);margin-bottom:2px;">23-24下</div>
+              <div style="font-size:18px;font-weight:700;color:var(--gray-700);">3.34</div>
+            </div>
+            <div style="text-align:center;padding:8px;background:var(--primary-light);border-radius:8px;border:1px solid var(--primary-mid);">
+              <div style="font-size:10px;color:var(--accent);margin-bottom:2px;">本学期</div>
+              <div style="font-size:18px;font-weight:700;color:var(--accent);">3.42</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 毕业要求 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">🎓</span>毕业要求达成情况</div>
+          <div style="font-size:11px;color:var(--gray-400);margin-bottom:10px;padding:6px 10px;background:var(--gray-50);border-radius:6px;">进度条表示各模块达成情况，线条越长表示完成度越高</div>
+          <div class="grad-item">
+            <div class="grad-name">通识教育课程</div>
+            <div style="flex:1;display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="width:92%;height:100%;background:var(--primary);border-radius:4px;"></div></div>
+              <span class="grad-status" style="color:var(--primary-dark);white-space:nowrap;">✅ 92%</span>
+            </div>
+          </div>
+          <div class="grad-item">
+            <div class="grad-name">专业核心课程</div>
+            <div style="flex:1;display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="width:78%;height:100%;background:var(--primary);border-radius:4px;"></div></div>
+              <span class="grad-status" style="color:var(--primary-dark);white-space:nowrap;">进行中 78%</span>
+            </div>
+          </div>
+          <div class="grad-item">
+            <div class="grad-name">实践与实习</div>
+            <div style="flex:1;display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="width:25%;height:100%;background:var(--orange);border-radius:4px;"></div></div>
+              <span class="grad-status" style="color:var(--orange);white-space:nowrap;">⚠ 25%</span>
+            </div>
+          </div>
+          <div class="grad-item">
+            <div class="grad-name">创新实践学分</div>
+            <div style="flex:1;display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="width:40%;height:100%;background:var(--orange);border-radius:4px;"></div></div>
+              <span class="grad-status" style="color:var(--orange);white-space:nowrap;">⚠ 40%</span>
+            </div>
+          </div>
+          <div class="grad-item">
+            <div class="grad-name">毕业论文</div>
+            <div style="flex:1;display:flex;align-items:center;gap:8px;">
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="width:0%;height:100%;background:var(--gray-300);border-radius:4px;"></div></div>
+              <span class="grad-status" style="color:var(--gray-400);white-space:nowrap;">大四开始</span>
+            </div>
+          </div>
+          <div class="alert alert-warn" style="margin-top:12px;margin-bottom:0;">
+            <span>⚠️</span><span>实践类学分进度较慢，建议大二下学期积极参与项目实践。</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 课程成绩 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">📊</span>本学期课程成绩详情</div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>课程名称</th>
+                <th>学分</th>
+                <th>平时成绩</th>
+                <th>期中成绩</th>
+                <th>当前综合</th>
+                <th>状态</th>
+                <th>建议</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr class="course-row">
+                <td><strong>数据结构与算法</strong></td>
+                <td>4</td>
+                <td>88</td>
+                <td>85</td>
+                <td><div class="score-bar"><div class="score-bar-wrap"><div class="score-bar-fill" style="width:87%;background:var(--primary);"></div></div><span>87</span></div></td>
+                <td><span class="tag tag-green">良好</span></td>
+                <td style="font-size:12px;color:var(--gray-500);">保持当前节奏</td>
+              </tr>
+              <tr class="course-row">
+                <td><strong>数据库原理</strong></td>
+                <td>3</td>
+                <td>82</td>
+                <td>78</td>
+                <td><div class="score-bar"><div class="score-bar-wrap"><div class="score-bar-fill" style="width:80%;background:var(--primary);"></div></div><span>80</span></div></td>
+                <td><span class="tag tag-blue">稳定</span></td>
+                <td style="font-size:12px;color:var(--orange);">关注期末复习</td>
+              </tr>
+              <tr class="course-row">
+                <td><strong>高等数学（下）</strong></td>
+                <td>4</td>
+                <td>75</td>
+                <td>70</td>
+                <td><div class="score-bar"><div class="score-bar-wrap"><div class="score-bar-fill" style="width:73%;background:var(--orange);"></div></div><span>73</span></div></td>
+                <td><span class="tag tag-orange">需关注</span></td>
+                <td style="font-size:12px;color:var(--red);">建议重点补弱</td>
+              </tr>
+              <tr class="course-row">
+                <td><strong>英语综合（三）</strong></td>
+                <td>3</td>
+                <td>80</td>
+                <td>82</td>
+                <td><div class="score-bar"><div class="score-bar-wrap"><div class="score-bar-fill" style="width:81%;background:var(--primary);"></div></div><span>81</span></div></td>
+                <td><span class="tag tag-green">良好</span></td>
+                <td style="font-size:12px;color:var(--gray-500);">可准备四级考试</td>
+              </tr>
+              <tr class="course-row">
+                <td><strong>计算机网络</strong></td>
+                <td>3</td>
+                <td>90</td>
+                <td>88</td>
+                <td><div class="score-bar"><div class="score-bar-wrap"><div class="score-bar-fill" style="width:89%;background:var(--primary);"></div></div><span>89</span></div></td>
+                <td><span class="tag tag-green">优秀</span></td>
+                <td style="font-size:12px;color:var(--primary-dark);">表现优秀</td>
+              </tr>
+              <tr class="course-row">
+                <td><strong>体育（二）</strong></td>
+                <td>1</td>
+                <td>85</td>
+                <td>—</td>
+                <td><div class="score-bar"><div class="score-bar-wrap"><div class="score-bar-fill" style="width:85%;background:var(--primary);"></div></div><span>85</span></div></td>
+                <td><span class="tag tag-green">良好</span></td>
+                <td style="font-size:12px;color:var(--gray-500);">正常</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 学习投入 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">⏱️</span>学习投入分析</div>
+          <!-- 指标名称左对齐，数值右对齐 -->
+          <div class="invest-item">
+            <div class="invest-icon">📚</div>
+            <div class="invest-label" style="flex:1;">图书馆到馆次数
+              <div class="invest-trend">近30天</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div class="invest-val">6<span style="font-size:12px;font-weight:400;color:var(--gray-400);">次</span></div>
+              <div style="font-size:11px;color:var(--primary-dark);">↑ 较均值 +2</div>
+            </div>
+          </div>
+          <div class="invest-item">
+            <div class="invest-icon">💻</div>
+            <div class="invest-label" style="flex:1;">在线学习平台使用
+              <div class="invest-trend">本学期</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div class="invest-val">42<span style="font-size:12px;font-weight:400;color:var(--gray-400);">小时</span></div>
+              <div style="font-size:11px;color:var(--gray-400);">→ 同期持平</div>
+            </div>
+          </div>
+          <div class="invest-item">
+            <div class="invest-icon">📋</div>
+            <div class="invest-label" style="flex:1;">课堂出勤率
+              <div class="invest-trend">本学期</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div class="invest-val">96<span style="font-size:12px;font-weight:400;color:var(--gray-400);">%</span></div>
+              <div style="font-size:11px;color:var(--primary-dark);">↑ 表现优秀</div>
+            </div>
+          </div>
+          <div class="invest-item">
+            <div class="invest-icon">🌙</div>
+            <div class="invest-label" style="flex:1;">晚间学习规律
+              <div class="invest-trend">近30天</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div class="invest-val" style="font-size:14px;">较规律</div>
+              <div style="font-size:11px;color:var(--primary-dark);">→ 作息稳定</div>
+            </div>
+          </div>
+          <div class="invest-item">
+            <div class="invest-icon">📖</div>
+            <div class="invest-label" style="flex:1;">每日平均学习时长
+              <div class="invest-trend">近30天均值</div>
+            </div>
+            <div style="text-align:right;flex-shrink:0;">
+              <div class="invest-val">4.2<span style="font-size:12px;font-weight:400;color:var(--gray-400);">小时</span></div>
+              <div style="font-size:11px;color:var(--primary-dark);">↑ 高于班均</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 学习建议 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">💡</span>个性化学习建议</div>
+          <div class="suggest-item">
+            <div class="suggest-icon" style="background:var(--orange-light);">⚠️</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:3px;">重点关注：高等数学补弱</div>
+              <div style="font-size:12px;color:var(--gray-500);">当前成绩73分，建议优先突破积分与微分方程章节，可参加学院答疑室（周二、四下午）。</div>
+            </div>
+          </div>
+          <div class="suggest-item">
+            <div class="suggest-icon" style="background:var(--primary-light);">📘</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:3px;">数据库原理期末备考</div>
+              <div style="font-size:12px;color:var(--gray-500);">期末权重较高，建议提前整理SQL语句与ER设计重点，历年真题4套已上传平台。</div>
+            </div>
+          </div>
+          <div class="suggest-item">
+            <div class="suggest-icon" style="background:var(--blue-light);">🎯</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:3px;">英语四级备考建议</div>
+              <div style="font-size:12px;color:var(--gray-500);">当前英语成绩稳定，建议6月前参加四级考试，重点加强阅读理解速度和写作结构。</div>
+            </div>
+          </div>
+          <div class="suggest-item">
+            <div class="suggest-icon" style="background:var(--purple-light);">🌟</div>
+            <div>
+              <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:3px;">增加实践学分积累</div>
+              <div style="font-size:12px;color:var(--gray-500);">实践类毕业要求完成度仅25%，建议参加大二暑期社会实践项目或科研进组机会。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  drawInteractiveLineChart('line-gpa',
+    [
+      { name: '本人绩点', color: '#2ecc87', values: [3.28, 3.34, 3.42] },
+      { name: '专业均值', color: '#3b82f6', values: [3.20, 3.22, 3.25] },
+    ],
+    ['2023-2024上', '2023-2024下', '2024-2025上'],
+    { height: 150 }
+  );
+});
+</script>
+</body>
+</html>

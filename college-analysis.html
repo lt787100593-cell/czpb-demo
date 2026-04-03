@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>学院画像分析 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .major-compare-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .major-compare-item:last-child { border-bottom: none; }
+    .major-name { width: 100px; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
+    .major-bar-wrap { flex: 1; height: 10px; background: var(--gray-100); border-radius: 5px; overflow: hidden; }
+    .major-bar-fill { height: 100%; border-radius: 5px; }
+    .major-val { width: 36px; font-size: 13px; font-weight: 600; color: var(--gray-800); text-align: right; }
+    .major-change { width: 60px; font-size: 11px; text-align: right; }
+
+    .grade-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .grade-row:last-child { border-bottom: none; }
+
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: 60px repeat(5, 1fr);
+      gap: 3px;
+      font-size: 11px;
+    }
+    .heatmap-cell {
+      height: 36px;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: #fff;
+      font-size: 12px;
+    }
+    .heatmap-label {
+      height: 36px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 6px;
+      color: var(--gray-500);
+    }
+    .heatmap-header {
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-600);
+      font-weight: 600;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="dean" data-active="college-analysis"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <span class="current-page">学院学生成长态势分析</span>
+      </div>
+      <div class="topbar-actions">
+        <select class="filter-select"><option>信息工程学院</option><option>商学院</option><option>理学院</option></select>
+        <select class="filter-select"><option>2024-2025上学期</option><option>2023-2024下学期</option></select>
+        <button class="btn btn-outline btn-sm" onclick="showToast('已导出学院分析报告','success')">导出报告</button>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- 说明条 -->
+      <div style="background:var(--primary-light);border:1px solid var(--primary-mid);border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;display:flex;align-items:center;gap:10px;">
+        <span style="font-size:16px;">🏫</span>
+        <div style="font-size:12px;color:var(--gray-600);">当前查看：<strong>信息工程学院</strong> · 2024-2025学年上学期 · 数据范围：本院4个专业632名在校学生</div>
+        <div style="margin-left:auto;font-size:11px;color:var(--gray-400);">↑ 可通过顶部筛选切换学院或学期</div>
+      </div>
+
+      <!-- KPI -->
+      <div class="stat-grid grid-5 section-gap">
+        <div class="stat-card green">
+          <div class="stat-label">学院学生总数</div>
+          <div class="stat-value">632<span class="unit">人</span></div>
+          <div class="stat-change neutral">4个专业 / 8个年级</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-label">重点关注总数</div>
+          <div class="stat-value">78<span class="unit">人</span></div>
+          <div class="stat-change down">占比 12.3% ↑+1.2%</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">学业进展关注</div>
+          <div class="stat-value">42<span class="unit">人</span></div>
+          <div class="stat-change neutral">占学院 6.6%</div>
+        </div>
+        <div class="stat-card purple" style="--purple:#8b5cf6;">
+          <div class="stat-label">支持对象总数</div>
+          <div class="stat-value">28<span class="unit">人</span></div>
+          <div class="stat-change neutral">资助+保障双重关注</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">优势培育对象</div>
+          <div class="stat-value">56<span class="unit">人</span></div>
+          <div class="stat-change up">↑ 本学期+8</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 五育态势 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">⭐</span>学院五育整体态势
+            <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">综合评分 = 五维加权均值</span>
+          </div>
+          <div style="display:flex;gap:16px;align-items:center;">
+            <div style="flex-shrink:0;">
+              <svg id="radar-college" width="210" height="210" viewBox="0 0 210 210" style="overflow:visible;"></svg>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:11px;color:var(--gray-400);margin-bottom:8px;padding-bottom:6px;border-bottom:1px solid var(--gray-100);">五育维度均值 · 满分100</div>
+              <div style="display:flex;flex-direction:column;gap:7px;">
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:28px;font-size:11px;color:var(--gray-500);">德育</span>
+                  <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:77%;background:var(--primary);border-radius:4px;"></div></div>
+                  <span style="font-size:13px;font-weight:700;color:var(--gray-800);width:24px;text-align:right;">77</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:28px;font-size:11px;color:var(--gray-500);">智育</span>
+                  <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:81%;background:var(--blue);border-radius:4px;"></div></div>
+                  <span style="font-size:13px;font-weight:700;color:var(--accent);width:24px;text-align:right;">81</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:28px;font-size:11px;color:var(--gray-500);">体育</span>
+                  <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:63%;background:var(--orange);border-radius:4px;"></div></div>
+                  <span style="font-size:13px;font-weight:700;color:var(--orange);width:24px;text-align:right;">63</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:28px;font-size:11px;color:var(--gray-500);">美育</span>
+                  <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:57%;background:var(--orange);border-radius:4px;"></div></div>
+                  <span style="font-size:13px;font-weight:700;color:var(--orange);width:24px;text-align:right;">57</span>
+                </div>
+                <div style="display:flex;align-items:center;gap:8px;">
+                  <span style="width:28px;font-size:11px;color:var(--gray-500);">劳育</span>
+                  <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:72%;background:var(--primary);border-radius:4px;"></div></div>
+                  <span style="font-size:13px;font-weight:700;color:var(--gray-800);width:24px;text-align:right;">72</span>
+                </div>
+              </div>
+              <div class="alert alert-warn" style="margin-top:12px;margin-bottom:0;padding:8px 10px;">
+                <span>⚠️</span><span style="font-size:12px;">体育（63）与美育（57）明显低于均值，建议重点关注。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 年级分析 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📊</span>年级关注分布对比
+            <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">关注人数 / 占该年级比例</span>
+          </div>
+          <div id="grade-bar"></div>
+          <div style="margin-top:16px;padding-top:12px;border-top:1px solid var(--gray-100);">
+            <div style="font-size:11px;color:var(--gray-400);margin-bottom:10px;">各年级重点关注情况说明</div>
+            <div class="grade-row">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--red);flex-shrink:0;display:inline-block;"></span>
+                <span style="font-size:13px;color:var(--gray-600);">2021级（大四）</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="tag tag-red">毕业风险 9人</span>
+                <span style="font-size:12px;font-weight:600;color:var(--red);">重点关注</span>
+              </div>
+            </div>
+            <div class="grade-row">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--orange);flex-shrink:0;display:inline-block;"></span>
+                <span style="font-size:13px;color:var(--gray-600);">2022级（大三）</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="tag tag-orange">学业进展 14人</span>
+                <span style="font-size:12px;font-weight:600;color:var(--orange);">较多</span>
+              </div>
+            </div>
+            <div class="grade-row">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0;display:inline-block;"></span>
+                <span style="font-size:13px;color:var(--gray-600);">2023级（大二）</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="tag tag-blue">综合关注 18人</span>
+                <span style="font-size:12px;font-weight:600;color:var(--blue);">持续关注</span>
+              </div>
+            </div>
+            <div class="grade-row">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="width:8px;height:8px;border-radius:50%;background:var(--primary);flex-shrink:0;display:inline-block;"></span>
+                <span style="font-size:13px;color:var(--gray-600);">2024级（大一）</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span class="tag tag-green">适应支持 11人</span>
+                <span style="font-size:12px;font-weight:600;color:var(--accent);">新生适应</span>
+              </div>
+            </div>
+          </div>
+          <div class="hint-text" style="margin-top:10px;">图表纵轴为该年级关注学生总人数，越高说明该年级整体支持需求越强。</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 专业对比 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">🔍</span>专业学业进展对比</div>
+          <div class="major-compare-item">
+            <div class="major-name">软件工程</div>
+            <div class="major-bar-wrap"><div class="major-bar-fill" style="width:66%;background:var(--orange);"></div></div>
+            <div class="major-val">6.6%</div>
+            <div class="major-change" style="color:var(--orange);">↑ 偏高</div>
+          </div>
+          <div class="major-compare-item">
+            <div class="major-name">计算机科学</div>
+            <div class="major-bar-wrap"><div class="major-bar-fill" style="width:52%;background:var(--blue);"></div></div>
+            <div class="major-val">5.2%</div>
+            <div class="major-change" style="color:var(--gray-400);">→ 持平</div>
+          </div>
+          <div class="major-compare-item">
+            <div class="major-name">数据科学</div>
+            <div class="major-bar-wrap"><div class="major-bar-fill" style="width:48%;background:var(--primary);"></div></div>
+            <div class="major-val">4.8%</div>
+            <div class="major-change" style="color:var(--primary-dark);">↓ 改善</div>
+          </div>
+          <div class="major-compare-item">
+            <div class="major-name">信息管理</div>
+            <div class="major-bar-wrap"><div class="major-bar-fill" style="width:42%;background:var(--primary);"></div></div>
+            <div class="major-val">4.2%</div>
+            <div class="major-change" style="color:var(--primary-dark);">↓ 改善</div>
+          </div>
+          <div style="margin-top:14px;font-size:12px;color:var(--gray-400);">以上为各专业学业进展关注人数占比，数值越低越好。</div>
+        </div>
+
+        <!-- 热力分布 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">🌡️</span>五育×年级热力分布</div>
+          <div class="heatmap-grid">
+            <div class="heatmap-header"></div>
+            <div class="heatmap-header">德育</div>
+            <div class="heatmap-header">智育</div>
+            <div class="heatmap-header">体育</div>
+            <div class="heatmap-header">美育</div>
+            <div class="heatmap-header">劳育</div>
+
+            <div class="heatmap-label">大一</div>
+            <div class="heatmap-cell" style="background:#16a34a;">82</div>
+            <div class="heatmap-cell" style="background:#2ecc87;">78</div>
+            <div class="heatmap-cell" style="background:#f59e0b;">66</div>
+            <div class="heatmap-cell" style="background:#f59e0b;">60</div>
+            <div class="heatmap-cell" style="background:#16a34a;">80</div>
+
+            <div class="heatmap-label">大二</div>
+            <div class="heatmap-cell" style="background:#2ecc87;">79</div>
+            <div class="heatmap-cell" style="background:#16a34a;">82</div>
+            <div class="heatmap-cell" style="background:#dc2626;">62</div>
+            <div class="heatmap-cell" style="background:#dc2626;">57</div>
+            <div class="heatmap-cell" style="background:#2ecc87;">74</div>
+
+            <div class="heatmap-label">大三</div>
+            <div class="heatmap-cell" style="background:#2ecc87;">76</div>
+            <div class="heatmap-cell" style="background:#2ecc87;">80</div>
+            <div class="heatmap-cell" style="background:#f59e0b;">65</div>
+            <div class="heatmap-cell" style="background:#f59e0b;">62</div>
+            <div class="heatmap-cell" style="background:#2ecc87;">76</div>
+
+            <div class="heatmap-label">大四</div>
+            <div class="heatmap-cell" style="background:#2ecc87;">74</div>
+            <div class="heatmap-cell" style="background:#f59e0b;">75</div>
+            <div class="heatmap-cell" style="background:#dc2626;">60</div>
+            <div class="heatmap-cell" style="background:#dc2626;">55</div>
+            <div class="heatmap-cell" style="background:#2ecc87;">72</div>
+          </div>
+          <div style="margin-top:14px;padding-top:10px;border-top:1px solid var(--gray-100);">
+            <div style="font-size:11px;color:var(--gray-400);margin-bottom:8px;">颜色图例说明</div>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gray-600);">
+                <span style="width:14px;height:14px;background:#16a34a;border-radius:3px;display:inline-block;flex-shrink:0;"></span>优秀（85+）
+              </span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gray-600);">
+                <span style="width:14px;height:14px;background:#2ecc87;border-radius:3px;display:inline-block;flex-shrink:0;"></span>良好（70-85）
+              </span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gray-600);">
+                <span style="width:14px;height:14px;background:#f59e0b;border-radius:3px;display:inline-block;flex-shrink:0;"></span>待提升（60-70）
+              </span>
+              <span style="display:flex;align-items:center;gap:5px;font-size:12px;color:var(--gray-600);">
+                <span style="width:14px;height:14px;background:#dc2626;border-radius:3px;display:inline-block;flex-shrink:0;"></span>需关注（60以下）
+              </span>
+            </div>
+            <div class="hint-text" style="margin-top:8px;">体育与美育在大二、大三年级普遍偏低（红色区域），建议学院针对性开展课外体育与美育活动。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 趋势 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">📈</span>学院重点关注规模趋势（近6个月）
+          <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">2024年10月 — 2025年3月</span>
+        </div>
+        <div id="line-college" style="width:100%;height:200px;background:var(--gray-50);border-radius:8px;overflow:visible;"></div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-top:10px;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;gap:16px;flex-wrap:wrap;">
+            <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-600);">
+              <span style="width:16px;height:3px;background:#3b82f6;display:inline-block;border-radius:2px;"></span>学业进展关注
+            </span>
+            <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-600);">
+              <span style="width:16px;height:3px;background:#f59e0b;display:inline-block;border-radius:2px;"></span>生活规律波动
+            </span>
+            <span style="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--gray-600);">
+              <span style="width:16px;height:3px;background:#8b5cf6;display:inline-block;border-radius:2px;"></span>保障支持关注
+            </span>
+          </div>
+          <span style="font-size:11px;color:var(--gray-400);">趋势以月度汇总数据为准，波动属正常范围</span>
+        </div>
+        <div class="alert alert-info" style="margin-top:12px;margin-bottom:0;">
+          <span>💡</span>
+          <span>学业进展关注人数在12月出现小高峰（期末考试前），符合学期规律；保障支持呈缓慢增长，建议持续跟踪。</span>
+        </div>
+      </div>
+
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">
+        <div style="font-size:12px;color:var(--gray-400);">💡 点击进入更详细的专题分析或查看具体学生名单</div>
+        <div style="display:flex;gap:12px;">
+          <a href="topic-analysis.html" class="btn btn-outline">进入专题分析 →</a>
+          <a href="counselor-list.html" class="btn btn-primary">查看重点名单 →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  drawRadar('radar-college', ['德育', '智育', '体育', '美育', '劳育'],
+    [77, 81, 63, 57, 72], '#2ecc87');
+  drawBarChart('grade-bar', [
+    { label: '2021级（大四）', value: 18 },
+    { label: '2022级（大三）', value: 22 },
+    { label: '2023级（大二）', value: 25 },
+    { label: '2024级（大一）', value: 13 },
+  ], 30, '#3b82f6');
+  drawInteractiveLineChart('line-college',
+    [
+      { name: '学业进展关注', color: '#3b82f6', values: [38, 42, 46, 40, 39, 42] },
+      { name: '生活规律波动', color: '#f59e0b', values: [20, 22, 28, 25, 26, 24] },
+      { name: '保障支持关注', color: '#8b5cf6', values: [22, 24, 20, 26, 28, 28] },
+    ],
+    ['10月', '11月', '12月', '1月', '2月', '3月'],
+    { height: 200 }
+  );
+});
+</script>
+</body>
+</html>

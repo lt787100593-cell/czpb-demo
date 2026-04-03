@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>提醒与推荐 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .remind-tabs { margin-bottom: 16px; }
+    .rec-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .rec-card-full {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+      cursor: pointer;
+      transition: var(--transition);
+      position: relative;
+    }
+    .rec-card-full:hover { border-color: var(--primary); box-shadow: 0 2px 12px rgba(46,204,135,0.12); transform: translateY(-1px); }
+    .rec-type-badge { font-size: 11px; color: var(--gray-400); margin-bottom: 6px; }
+    .rec-card-title { font-size: 14px; font-weight: 600; color: var(--gray-800); margin-bottom: 6px; }
+    .rec-card-desc { font-size: 12px; color: var(--gray-500); line-height: 1.6; margin-bottom: 10px; }
+    .rec-card-meta { display: flex; align-items: center; justify-content: space-between; }
+    .rec-reason-tag { font-size: 11px; color: var(--primary-dark); background: var(--primary-light); padding: 2px 8px; border-radius: 20px; }
+    .rec-fit { font-size: 11px; color: var(--gray-400); }
+
+    .remind-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 10px;
+      border-left: 4px solid var(--primary);
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .remind-card.warn { border-left-color: var(--orange); }
+    .remind-card.info { border-left-color: var(--blue); }
+    .remind-card.urgent { border-left-color: var(--red); }
+    .remind-card-icon { font-size: 20px; flex-shrink: 0; }
+    .remind-card-body { flex: 1; }
+    .remind-card-title { font-size: 14px; font-weight: 600; color: var(--gray-800); margin-bottom: 4px; }
+    .remind-card-detail { font-size: 13px; color: var(--gray-500); line-height: 1.6; margin-bottom: 6px; }
+    .remind-card-footer { display: flex; align-items: center; gap: 10px; }
+    .remind-card-time { font-size: 11px; color: var(--gray-400); }
+    .remind-read-btn { font-size: 11px; color: var(--primary-dark); cursor: pointer; background: none; border: none; padding: 0; }
+
+    .suggest-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .suggest-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius);
+      padding: 16px;
+    }
+    .suggest-icon-big { font-size: 24px; margin-bottom: 8px; }
+    .suggest-title { font-size: 14px; font-weight: 600; color: var(--gray-800); margin-bottom: 8px; }
+    .suggest-list { list-style: none; }
+    .suggest-list li {
+      font-size: 12px;
+      color: var(--gray-600);
+      padding: 4px 0;
+      border-bottom: 1px solid var(--gray-100);
+      display: flex;
+      gap: 6px;
+      align-items: flex-start;
+    }
+    .suggest-list li:last-child { border-bottom: none; }
+    .suggest-list li::before { content: '›'; color: var(--primary); font-weight: 700; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="student" data-active="student-remind"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <a href="student-home.html" style="color:inherit;text-decoration:none;">🏠 首页</a>
+        <span>›</span>
+        <span class="current-page">提醒与推荐</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date">2025年03月26日</span>
+        <button class="btn btn-outline btn-sm" onclick="showToast('已全部标为已读', 'success')">全部已读</button>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <div class="tabs-container">
+        <div class="tabs remind-tabs">
+          <div class="tab-item">近期提醒 <span class="count-badge" style="background:var(--red);color:#fff;margin-left:4px;">3</span></div>
+          <div class="tab-item">个性化建议</div>
+          <div class="tab-item">推荐资源</div>
+          <div class="tab-item">推荐依据说明</div>
+        </div>
+
+        <!-- 提醒 -->
+        <div class="tab-panel">
+          <div style="margin-bottom:14px;display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn btn-sm btn-primary" onclick="filterRemind('all')">全部(6)</button>
+            <button class="btn btn-sm btn-outline" onclick="filterRemind('study')">学业(2)</button>
+            <button class="btn btn-sm btn-outline" onclick="filterRemind('life')">生活(2)</button>
+            <button class="btn btn-sm btn-outline" onclick="filterRemind('dev')">发展(2)</button>
+          </div>
+
+          <div class="remind-card urgent">
+            <div class="remind-card-icon">📚</div>
+            <div class="remind-card-body">
+              <div class="remind-card-title">《数据库原理》本周进入阶段测试</div>
+              <div class="remind-card-detail">本周五（03-28）进行《数据库原理》阶段测试，建议重点复习第3—5章SQL语句与事务管理内容，参考历年真题进行针对性练习。</div>
+              <div class="remind-card-footer">
+                <span class="remind-card-time">📅 2025-03-25 · 学业提醒</span>
+                <span class="tag tag-orange">紧急</span>
+                <button class="remind-read-btn" onclick="showToast('已标记为已读', 'success')">✓ 标为已读</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="remind-card warn">
+            <div class="remind-card-icon">🏃</div>
+            <div class="remind-card-body">
+              <div class="remind-card-title">运动频次下降提示</div>
+              <div class="remind-card-detail">近两周校园跑和场馆记录显示运动频次有所下降，相比本学期平均少约1次/周。建议保持规律锻炼习惯，有助于调节学习节奏。</div>
+              <div class="remind-card-footer">
+                <span class="remind-card-time">📅 2025-03-24 · 生活提醒</span>
+                <span class="tag tag-orange">关注</span>
+                <button class="remind-read-btn" onclick="showToast('已标记为已读', 'success')">✓ 标为已读</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="remind-card info">
+            <div class="remind-card-icon">🎯</div>
+            <div class="remind-card-body">
+              <div class="remind-card-title">第二课堂学分进度提示</div>
+              <div class="remind-card-detail">当前第二课堂学分累计进度较同年级平均进度偏慢约12%，建议关注近期学院活动并及时记录学时，避免临近毕业时集中补充。</div>
+              <div class="remind-card-footer">
+                <span class="remind-card-time">📅 2025-03-22 · 发展提醒</span>
+                <span class="tag tag-blue">建议</span>
+                <button class="remind-read-btn" onclick="showToast('已标记为已读', 'success')">✓ 标为已读</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="remind-card" style="border-left-color:var(--primary);">
+            <div class="remind-card-icon">📅</div>
+            <div class="remind-card-body">
+              <div class="remind-card-title">英语四级报名截止提醒</div>
+              <div class="remind-card-detail">2025年6月英语四级报名截止日期为4月15日，根据你当前英语成绩，具备良好参考基础，建议及时报名。</div>
+              <div class="remind-card-footer">
+                <span class="remind-card-time">📅 2025-03-20 · 发展提醒</span>
+                <span class="tag tag-green">建议</span>
+                <button class="remind-read-btn" onclick="showToast('已标记为已读', 'success')">✓ 标为已读</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="remind-card" style="border-left-color:var(--gray-300);opacity:0.7;">
+            <div class="remind-card-icon">✅</div>
+            <div class="remind-card-body">
+              <div class="remind-card-title">【已读】本学期体育课出勤良好</div>
+              <div class="remind-card-detail">本学期体育课出勤率96%，成绩85分，继续保持。</div>
+              <div class="remind-card-footer">
+                <span class="remind-card-time">📅 2025-03-15 · 学业提醒</span>
+                <span class="tag tag-gray">已读</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 建议 -->
+        <div class="tab-panel">
+          <div class="suggest-grid">
+            <div class="suggest-card">
+              <div class="suggest-icon-big">📘</div>
+              <div class="suggest-title">学习建议</div>
+              <ul class="suggest-list">
+                <li>优先突破《高等数学》积分方程章节薄弱点</li>
+                <li>《数据库原理》期末复习，重点关注SQL和事务管理</li>
+                <li>英语四级备考，加强阅读理解速度训练</li>
+                <li>课外适当参与编程类技能提升活动</li>
+                <li>保持当前图书馆自习习惯，规律效果更好</li>
+              </ul>
+            </div>
+            <div class="suggest-card">
+              <div class="suggest-icon-big">🏃</div>
+              <div class="suggest-title">生活建议</div>
+              <ul class="suggest-list">
+                <li>建议每周坚持2—3次体育锻炼，有助调节学习状态</li>
+                <li>保持规律作息，避免期末前突击熬夜</li>
+                <li>合理规划三餐，维持食堂规律就餐习惯</li>
+                <li>适当参加舍友间日常活动，增进宿舍关系</li>
+              </ul>
+            </div>
+            <div class="suggest-card">
+              <div class="suggest-icon-big">🌟</div>
+              <div class="suggest-title">成长建议</div>
+              <ul class="suggest-list">
+                <li>适当参与校园文体活动，提升美育和体育维度</li>
+                <li>增加志愿服务参与频次，积累德育成长积分</li>
+                <li>关注学院科研入门项目，提前积累实践学分</li>
+                <li>参加第二课堂活动，合理补充学时进度</li>
+              </ul>
+            </div>
+            <div class="suggest-card">
+              <div class="suggest-icon-big">🚀</div>
+              <div class="suggest-title">生涯发展建议</div>
+              <ul class="suggest-list">
+                <li>大二阶段是方向探索关键期，建议参加生涯规划讲座</li>
+                <li>了解软件工程行业细分方向，初步形成兴趣认知</li>
+                <li>关注暑期实习机会和项目实训活动</li>
+                <li>可考虑参加程序设计竞赛，增加竞争力积累</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- 推荐资源 -->
+        <div class="tab-panel">
+          <div class="filter-bar">
+            <span class="filter-label">资源类型：</span>
+            <select class="filter-select"><option>全部</option><option>学业辅导</option><option>活动参与</option><option>服务资源</option><option>发展规划</option></select>
+            <span class="filter-label">匹配度：</span>
+            <select class="filter-select"><option>全部</option><option>高度匹配</option><option>建议了解</option></select>
+          </div>
+          <div class="rec-grid">
+            <div class="rec-card-full">
+              <div class="rec-type-badge">📘 学业辅导</div>
+              <div class="rec-card-title">高等数学强化训练营</div>
+              <div class="rec-card-desc">数学教学部每周二、四下午开放答疑，可针对薄弱章节进行1对1辅导，免费参加。</div>
+              <div class="rec-card-meta">
+                <span class="rec-reason-tag">学业提升</span>
+                <span class="rec-fit">高度匹配</span>
+              </div>
+            </div>
+            <div class="rec-card-full">
+              <div class="rec-type-badge">🏃 体育健康</div>
+              <div class="rec-card-title">本周校园健康跑（周四下午）</div>
+              <div class="rec-card-desc">3月27日下午4点，操场定期校园跑活动，参与即可获得体育锻炼记录，欢迎组队参与。</div>
+              <div class="rec-card-meta">
+                <span class="rec-reason-tag">体育提升</span>
+                <span class="rec-fit">高度匹配</span>
+              </div>
+            </div>
+            <div class="rec-card-full">
+              <div class="rec-type-badge">🎨 美育活动</div>
+              <div class="rec-card-title">学院艺术社团招新开放日</div>
+              <div class="rec-card-desc">摄影社、吉他社、书法社等多个文艺社团本周开放日报名，参与可计入美育学时。</div>
+              <div class="rec-card-meta">
+                <span class="rec-reason-tag">美育提升</span>
+                <span class="rec-fit">高度匹配</span>
+              </div>
+            </div>
+            <div class="rec-card-full">
+              <div class="rec-type-badge">🌟 发展规划</div>
+              <div class="rec-card-title">大学生职业规划入门讲座</div>
+              <div class="rec-card-desc">就业指导中心本周五下午举办"大二学生职业规划启航"讲座，适合尚在方向探索阶段的同学。</div>
+              <div class="rec-card-meta">
+                <span class="rec-reason-tag">生涯发展</span>
+                <span class="rec-fit">建议了解</span>
+              </div>
+            </div>
+            <div class="rec-card-full">
+              <div class="rec-type-badge">💻 实践机会</div>
+              <div class="rec-card-title">软件工程暑期科研入门计划</div>
+              <div class="rec-card-desc">信息学院面向大二学生开放暑期科研入门名额，申请截止4月30日，可计入实践学分。</div>
+              <div class="rec-card-meta">
+                <span class="rec-reason-tag">实践积累</span>
+                <span class="rec-fit">高度匹配</span>
+              </div>
+            </div>
+            <div class="rec-card-full">
+              <div class="rec-type-badge">❤️ 心理健康</div>
+              <div class="rec-card-title">大学生心理成长工作坊（第三期）</div>
+              <div class="rec-card-desc">心理中心本月举办"认识自我，管理压力"工作坊，适合有学业压力感知的同学，免费报名。</div>
+              <div class="rec-card-meta">
+                <span class="rec-reason-tag">压力调适</span>
+                <span class="rec-fit">建议了解</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 推荐依据 -->
+        <div class="tab-panel">
+          <div class="card">
+            <div class="card-title"><span class="title-icon">ℹ️</span>推荐内容生成依据说明</div>
+            <div style="font-size:13px;color:var(--gray-600);line-height:2;">
+              <p>本页面展示的提醒与推荐内容，均基于以下维度的数据进行个性化匹配，旨在为你提供更有针对性的成长支持参考：</p>
+              <br>
+              <div class="grid-2" style="gap:12px;">
+                <div style="padding:12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);">
+                  <div style="font-weight:600;margin-bottom:6px;">📚 学业数据维度</div>
+                  <div style="font-size:12px;color:var(--gray-500);">基于你当前绩点、修读进度、课程成绩分布、挂科情况、学习投入，生成学业类提醒和学习资源推荐。</div>
+                </div>
+                <div style="padding:12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);">
+                  <div style="font-weight:600;margin-bottom:6px;">🏃 行为生活维度</div>
+                  <div style="font-size:12px;color:var(--gray-500);">基于运动记录、门禁规律、图书馆到馆数据，生成生活规律类提醒和健康建议。</div>
+                </div>
+                <div style="padding:12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);">
+                  <div style="font-weight:600;margin-bottom:6px;">⭐ 五育评价维度</div>
+                  <div style="font-size:12px;color:var(--gray-500);">基于五育各维度评价结果，针对偏弱维度推荐相关活动和资源，帮助补强短板。</div>
+                </div>
+                <div style="padding:12px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);">
+                  <div style="font-weight:600;margin-bottom:6px;">🚀 年级阶段维度</div>
+                  <div style="font-size:12px;color:var(--gray-500);">基于你当前年级（大二）的共性需求，推荐生涯规划、学科竞赛、实习机会等发展类资源。</div>
+                </div>
+              </div>
+              <br>
+              <div class="alert alert-info" style="margin-bottom:0;">
+                <span>💡</span>
+                <span>推荐内容仅作为成长支持参考，你可根据个人实际情况自主选择是否参与。所有推荐不构成强制要求，也不影响任何正式评价结果。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+function filterRemind(type) {
+  showToast('已筛选: ' + (type === 'all' ? '全部' : type === 'study' ? '学业' : type === 'life' ? '生活' : '发展'), 'info');
+}
+</script>
+</body>
+</html>

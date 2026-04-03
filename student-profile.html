@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>我的成长画像 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .profile-hero {
+      background: linear-gradient(135deg, #f0fdf9 0%, #d1fae5 100%);
+      border-radius: var(--radius);
+      padding: 24px;
+      border: 1px solid var(--primary-mid);
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .profile-avatar-big {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 28px; color: #fff; font-weight: 700;
+      flex-shrink: 0;
+      box-shadow: 0 4px 12px rgba(46,204,135,0.3);
+    }
+    .profile-basic { flex: 1; }
+    .profile-name { font-size: 22px; font-weight: 700; color: var(--gray-800); }
+    .profile-meta { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+    .profile-meta span { margin-right: 14px; }
+    .profile-tags { margin-top: 10px; display: flex; gap: 6px; flex-wrap: wrap; }
+    .profile-grade-area {
+      text-align: center;
+      padding: 0 24px;
+      border-left: 1px solid var(--primary-mid);
+    }
+    .profile-grade-big {
+      font-size: 42px;
+      font-weight: 800;
+      color: var(--accent);
+      line-height: 1;
+    }
+    .profile-grade-label { font-size: 12px; color: var(--gray-500); margin-top: 4px; }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 0;
+    }
+    .info-item {
+      padding: 10px 14px;
+      border-right: 1px solid var(--gray-100);
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .info-item:nth-child(3n) { border-right: none; }
+    .info-label { font-size: 11px; color: var(--gray-400); margin-bottom: 3px; }
+    .info-value { font-size: 13px; color: var(--gray-800); font-weight: 500; }
+
+    .growth-summary {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 12px;
+    }
+    .growth-dim-card {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 14px;
+    }
+    .growth-dim-card .dim-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .growth-dim-card .dim-name { font-size: 13px; font-weight: 600; color: var(--gray-700); }
+    .growth-dim-card .dim-status {
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 20px;
+    }
+    .dim-status-good { background: var(--primary-light); color: var(--accent); }
+    .dim-status-warn { background: var(--orange-light); color: #92400e; }
+    .dim-status-avg { background: var(--blue-light); color: #1d4ed8; }
+    .growth-dim-card .dim-desc { font-size: 12px; color: var(--gray-500); line-height: 1.5; }
+
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .tag-cloud .tag {
+      font-size: 12px;
+      cursor: default;
+    }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="student" data-active="student-profile"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <a href="student-home.html" style="color:inherit;text-decoration:none;">🏠 首页</a>
+        <span>›</span>
+        <span class="current-page">我的成长画像</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date">2025年03月26日</span>
+        <select class="filter-select" onchange="showToast('已切换至'+(this.options[this.selectedIndex].text), 'info')">
+          <option>2024-2025学年上学期</option>
+          <option>2023-2024学年下学期</option>
+          <option>2023-2024学年上学期</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- 个人名片 -->
+      <div class="profile-hero">
+        <div class="profile-avatar-big">张</div>
+        <div class="profile-basic">
+          <div class="profile-name">张同学 <span style="font-size:14px;font-weight:400;color:var(--gray-500);">2023030312</span></div>
+          <div class="profile-meta">
+            <span>📍 信息工程学院</span>
+            <span>📚 软件工程专业</span>
+            <span>🏠 9栋306室</span>
+            <span>👩‍🏫 辅导员：李老师</span>
+          </div>
+          <div class="profile-tags">
+            <span class="tag tag-green">学业稳定型</span>
+            <span class="tag tag-blue">自主学习较强</span>
+            <span class="tag tag-orange">体育参与不足</span>
+            <span class="tag tag-gray">校园活动参与一般</span>
+            <span class="tag tag-purple">发展潜力较好</span>
+          </div>
+        </div>
+        <div class="profile-grade-area">
+          <div class="profile-grade-big">B+</div>
+          <div class="profile-grade-label">综合成长等级</div>
+          <div style="margin-top:8px;font-size:12px;color:var(--primary-dark);">较上学期 ↑ 提升</div>
+        </div>
+      </div>
+
+      <!-- 基础信息（独占一行，3列网格，信息丰富） -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">📋</span>基础信息</div>
+        <div class="info-grid">
+          <div class="info-item"><div class="info-label">学号</div><div class="info-value">2023030312</div></div>
+          <div class="info-item"><div class="info-label">姓名</div><div class="info-value">张同学</div></div>
+          <div class="info-item"><div class="info-label">性别</div><div class="info-value">男</div></div>
+          <div class="info-item"><div class="info-label">年级</div><div class="info-value">2023级（大二）</div></div>
+          <div class="info-item"><div class="info-label">入学年份</div><div class="info-value">2023年9月</div></div>
+          <div class="info-item"><div class="info-label">预计毕业</div><div class="info-value">2027年6月</div></div>
+          <div class="info-item"><div class="info-label">学院</div><div class="info-value">信息工程学院</div></div>
+          <div class="info-item"><div class="info-label">专业</div><div class="info-value">软件工程</div></div>
+          <div class="info-item"><div class="info-label">班级</div><div class="info-value">软件3班</div></div>
+          <div class="info-item"><div class="info-label">宿舍</div><div class="info-value">9栋306室</div></div>
+          <div class="info-item"><div class="info-label">学籍状态</div><div class="info-value" style="color:var(--accent);">正常在读</div></div>
+          <div class="info-item"><div class="info-label">修读学分</div><div class="info-value">58 / 74 分</div></div>
+          <div class="info-item"><div class="info-label">当前绩点</div><div class="info-value" style="color:var(--accent);">3.42 GPA</div></div>
+          <div class="info-item"><div class="info-label">综合等级</div><div class="info-value" style="color:var(--accent);">B+</div></div>
+          <div class="info-item"><div class="info-label">辅导员</div><div class="info-value">李老师</div></div>
+          <div class="info-item"><div class="info-label">班主任</div><div class="info-value">王教授</div></div>
+          <div class="info-item"><div class="info-label">生源地</div><div class="info-value">广东省广州市</div></div>
+          <div class="info-item"><div class="info-label">民族</div><div class="info-value">汉族</div></div>
+          <div class="info-item"><div class="info-label">政治面貌</div><div class="info-value">共青团员</div></div>
+        </div>
+      </div>
+
+      <!-- 五育发展全景：左雷达图，右两栏并排得分 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">⭐</span>五育发展全景</div>
+        <div style="display:flex;gap:20px;align-items:flex-start;">
+          <!-- 雷达图 -->
+          <div style="flex-shrink:0;">
+            <svg id="radar-profile" width="210" height="210" viewBox="0 0 210 210" style="overflow:visible;"></svg>
+          </div>
+          <!-- 右侧：两栏横向分数卡 -->
+          <div style="flex:1;min-width:0;">
+            <div style="font-size:12px;color:var(--gray-500);margin-bottom:10px;">五育综合得分 · 本学期 · 满分100</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+              <div style="background:#fef9c3;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+                <div style="font-size:24px;">🌟</div>
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:#854d0e;margin-bottom:2px;">德育表现</div>
+                  <div style="font-size:28px;font-weight:800;color:#854d0e;line-height:1;">82</div>
+                  <div style="font-size:11px;color:#a16207;margin-top:2px;">良好</div>
+                </div>
+              </div>
+              <div style="background:#d1fae5;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+                <div style="font-size:24px;">📚</div>
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:#065f46;margin-bottom:2px;">智育发展</div>
+                  <div style="font-size:28px;font-weight:800;color:#065f46;line-height:1;">88</div>
+                  <div style="font-size:11px;color:#047857;margin-top:2px;">较优</div>
+                </div>
+              </div>
+              <div style="background:#fee2e2;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+                <div style="font-size:24px;">🏃</div>
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:#991b1b;margin-bottom:2px;">体育健康</div>
+                  <div style="font-size:28px;font-weight:800;color:#991b1b;line-height:1;">65</div>
+                  <div style="font-size:11px;color:#dc2626;margin-top:2px;">待提升</div>
+                </div>
+              </div>
+              <div style="background:#ede9fe;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;">
+                <div style="font-size:24px;">🎨</div>
+                <div>
+                  <div style="font-size:12px;font-weight:600;color:#4c1d95;margin-bottom:2px;">美育参与</div>
+                  <div style="font-size:28px;font-weight:800;color:#4c1d95;line-height:1;">58</div>
+                  <div style="font-size:11px;color:#6d28d9;margin-top:2px;">待提升</div>
+                </div>
+              </div>
+              <div style="background:#dbeafe;border-radius:10px;padding:14px 16px;display:flex;align-items:center;gap:12px;grid-column:1/-1;">
+                <div style="font-size:24px;">🤝</div>
+                <div style="display:flex;align-items:baseline;gap:10px;">
+                  <div>
+                    <div style="font-size:12px;font-weight:600;color:#1e3a8a;margin-bottom:2px;">劳育实践</div>
+                    <div style="font-size:28px;font-weight:800;color:#1e3a8a;line-height:1;">76 <span style="font-size:13px;font-weight:400;">良好</span></div>
+                  </div>
+                  <div style="margin-left:auto;font-size:12px;color:#1e40af;background:#eff6ff;padding:6px 12px;border-radius:8px;border:1px solid #bfdbfe;">
+                    💡 综合均值 <strong>74</strong>，高于专业均值 <strong>5</strong> 分
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 多维概览 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">📊</span>成长维度概览
+          <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">6大维度 · 当前学期数据</span>
+        </div>
+        <div class="growth-summary">
+          <div class="growth-dim-card">
+            <div class="dim-header">
+              <div class="dim-name">📚 学业发展</div>
+              <div class="dim-status dim-status-good">稳定</div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:4px;"><span>学分进度</span><span>78%</span></div>
+              <div class="progress-bar"><div class="progress-fill green" style="width:78%"></div></div>
+            </div>
+            <div class="dim-desc">当前绩点3.42，专业前30%。无挂科。图书馆月均到馆6次，学习投入较好。</div>
+          </div>
+          <div class="growth-dim-card">
+            <div class="dim-header">
+              <div class="dim-name">🏠 校园生活</div>
+              <div class="dim-status dim-status-avg">一般</div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:4px;"><span>规律度</span><span>72%</span></div>
+              <div class="progress-bar"><div class="progress-fill blue" style="width:72%"></div></div>
+            </div>
+            <div class="dim-desc">作息整体规律，近两周运动频次有所下降。消费稳定，无异常波动。</div>
+          </div>
+          <div class="growth-dim-card">
+            <div class="dim-header">
+              <div class="dim-name">🌟 活动参与</div>
+              <div class="dim-status dim-status-warn">偏弱</div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:4px;"><span>参与度</span><span>45%</span></div>
+              <div class="progress-bar"><div class="progress-fill orange" style="width:45%"></div></div>
+            </div>
+            <div class="dim-desc">本学期参与校园活动5次，志愿服务8学时，第二课堂学分进度偏慢。</div>
+          </div>
+          <div class="growth-dim-card">
+            <div class="dim-header">
+              <div class="dim-name">🏆 荣誉实践</div>
+              <div class="dim-status dim-status-good">良好</div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:4px;"><span>积累情况</span><span>68%</span></div>
+              <div class="progress-bar"><div class="progress-fill green" style="width:68%"></div></div>
+            </div>
+            <div class="dim-desc">获得院级奖学金1次，参与社会实践1项，暂无处分记录，诚信记录良好。</div>
+          </div>
+          <div class="growth-dim-card">
+            <div class="dim-header">
+              <div class="dim-name">🚀 生涯发展</div>
+              <div class="dim-status dim-status-avg">起步</div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:4px;"><span>准备度</span><span>32%</span></div>
+              <div class="progress-bar"><div class="progress-fill blue" style="width:32%"></div></div>
+            </div>
+            <div class="dim-desc">大二阶段，生涯方向尚在探索，建议提前参加职业规划相关活动和讲座。</div>
+          </div>
+          <div class="growth-dim-card">
+            <div class="dim-header">
+              <div class="dim-name">❤️ 综合支持</div>
+              <div class="dim-status dim-status-good">稳定</div>
+            </div>
+            <div style="margin-bottom:8px;">
+              <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--gray-500);margin-bottom:4px;"><span>稳定性</span><span>85%</span></div>
+              <div class="progress-bar"><div class="progress-fill green" style="width:85%"></div></div>
+            </div>
+            <div class="dim-desc">心理适应良好，已完成新生适应期，整体在校状态稳定，无明显需求信号。</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 成长标签 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">🏷️</span>成长特征标签</div>
+        <div class="tag-cloud">
+          <span class="tag tag-green">学业稳定型</span>
+          <span class="tag tag-blue">自主学习较强</span>
+          <span class="tag tag-green">图书馆常客</span>
+          <span class="tag tag-gray">校园活动参与一般</span>
+          <span class="tag tag-orange">体育参与不足</span>
+          <span class="tag tag-orange">美育偏弱</span>
+          <span class="tag tag-purple">发展潜力良好</span>
+          <span class="tag tag-green">诚信记录良好</span>
+          <span class="tag tag-blue">作息规律总体稳定</span>
+          <span class="tag tag-gray">生涯规划起步阶段</span>
+        </div>
+        <div class="hint-text" style="margin-top:10px;">* 标签基于本人行为数据自动生成，仅用于成长参考，不作为评价定性依据。</div>
+      </div>
+
+      <!-- 成长时间轴 -->
+      <div class="card">
+        <div class="card-title"><span class="title-icon">📅</span>成长事件时间轴</div>
+        <div class="timeline">
+          <div class="timeline-item">
+            <div class="timeline-date">2025-03-24</div>
+            <div class="timeline-content">参加班级主题团日活动，获得德育积分</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2025-02-28</div>
+            <div class="timeline-content">获得2023-2024学年院级三等奖学金</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2025-01-15</div>
+            <div class="timeline-content">完成本学期期末考试，绩点3.42，较上学期提升0.08</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2024-12-10</div>
+            <div class="timeline-content">参与学院志愿服务活动，累计志愿时长8小时</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2024-11-08</div>
+            <div class="timeline-content">参加校级创新创业讲座，完成第二课堂学时记录</div>
+          </div>
+          <div class="timeline-item">
+            <div class="timeline-date">2023-09-01</div>
+            <div class="timeline-content">入学报到，开启大学成长之旅</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  drawRadar('radar-profile', ['德育', '智育', '体育', '美育', '劳育'],
+    [82, 88, 65, 58, 76], '#2ecc87');
+});
+</script>
+</body>
+</html>

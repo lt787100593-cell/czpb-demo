@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>校级驾驶舱 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .dash-kpi-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; margin-bottom: 20px; }
+    .dash-kpi {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .dash-kpi::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+    }
+    .dash-kpi.k1::after { background: var(--primary); }
+    .dash-kpi.k2::after { background: var(--orange); }
+    .dash-kpi.k3::after { background: var(--blue); }
+    .dash-kpi.k4::after { background: var(--purple); }
+    .dash-kpi.k5::after { background: var(--red); }
+    .dash-kpi.k6::after { background: #f59e0b; }
+    .dash-kpi-val { font-size: 28px; font-weight: 800; color: var(--gray-800); line-height: 1.2; }
+    .dash-kpi-val .unit { font-size: 13px; font-weight: 400; color: var(--gray-400); }
+    .dash-kpi-label { font-size: 11px; color: var(--gray-500); margin-top: 4px; }
+    .dash-kpi-change { font-size: 11px; margin-top: 4px; }
+
+    .college-rank-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .college-rank-item:last-child { border-bottom: none; }
+    .rank-num { width: 22px; height: 22px; border-radius: 50%; background: var(--gray-100); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 700; color: var(--gray-500); flex-shrink: 0; }
+    .rank-num.top3 { background: var(--orange-light); color: var(--orange); }
+    .college-name { width: 80px; font-size: 13px; color: var(--gray-700); flex-shrink: 0; }
+    .college-bar-wrap { flex: 1; height: 10px; background: var(--gray-100); border-radius: 5px; overflow: hidden; }
+    .college-bar-fill { height: 100%; border-radius: 5px; }
+    .college-val { width: 40px; font-size: 13px; font-weight: 600; text-align: right; }
+    .college-pct { width: 40px; font-size: 11px; color: var(--gray-400); text-align: right; }
+
+    .news-item {
+      display: flex;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .news-item:last-child { border-bottom: none; }
+    .news-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+    .news-content { flex: 1; font-size: 13px; color: var(--gray-700); }
+    .news-time { font-size: 11px; color: var(--gray-400); margin-top: 3px; }
+
+    .topic-entry {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .topic-entry:hover { border-color: var(--primary); background: var(--primary-light); }
+    .te-icon { font-size: 20px; }
+    .te-body { flex: 1; }
+    .te-name { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+    .te-count { font-size: 12px; color: var(--gray-500); }
+    .te-trend { font-size: 11px; }
+    .te-arrow { font-size: 14px; color: var(--gray-300); }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="leader" data-active="dashboard"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <span class="current-page">🖥️ 学生成长态势驾驶舱</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date">2025年03月26日 更新</span>
+        <select class="filter-select"><option>2024-2025上学期</option><option>2023-2024下学期</option></select>
+        <button class="btn btn-outline btn-sm" onclick="showToast('已导出驾驶舱简报','success')">导出简报</button>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- 说明条 -->
+      <div style="background:linear-gradient(135deg,var(--primary-light),var(--blue-light));border:1px solid var(--primary-mid);border-radius:var(--radius);padding:12px 18px;margin-bottom:16px;display:flex;align-items:center;gap:12px;">
+        <span style="font-size:20px;">🖥️</span>
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--gray-800);">校级成长态势实时驾驶舱</div>
+          <div style="font-size:12px;color:var(--gray-500);margin-top:2px;">数据范围：全校本科在校生 · 数据更新频率：每日 · 以下数据仅供内部管理参考，不对外公布</div>
+        </div>
+        <div style="margin-left:auto;font-size:12px;color:var(--gray-400);">最后更新：2025-03-26 08:00</div>
+      </div>
+
+      <!-- 总体KPI -->
+      <div class="dash-kpi-grid">
+        <div class="dash-kpi k1">
+          <div class="dash-kpi-val">12,846<span class="unit">人</span></div>
+          <div class="dash-kpi-label">全校在校学生</div>
+          <div class="dash-kpi-change" style="color:var(--gray-400);">包含本科+专科</div>
+        </div>
+        <div class="dash-kpi k2">
+          <div class="dash-kpi-val">1,248<span class="unit">人</span></div>
+          <div class="dash-kpi-label">当前重点关注</div>
+          <div class="dash-kpi-change" style="color:var(--orange);">↑ 较月初 +68</div>
+        </div>
+        <div class="dash-kpi k3">
+          <div class="dash-kpi-val">9.7<span class="unit">%</span></div>
+          <div class="dash-kpi-label">关注对象占比</div>
+          <div class="dash-kpi-change" style="color:var(--orange);">↑ 上月 9.2%</div>
+        </div>
+        <div class="dash-kpi k4">
+          <div class="dash-kpi-val">486<span class="unit">人</span></div>
+          <div class="dash-kpi-label">本学期已改善</div>
+          <div class="dash-kpi-change" style="color:var(--primary-dark);">改善率 38.9%</div>
+        </div>
+        <div class="dash-kpi k5">
+          <div class="dash-kpi-val">324<span class="unit">人</span></div>
+          <div class="dash-kpi-label">学业进展关注</div>
+          <div class="dash-kpi-change" style="color:var(--orange);">↑ 本月+22</div>
+        </div>
+        <div class="dash-kpi k6">
+          <div class="dash-kpi-val">1,024<span class="unit">人</span></div>
+          <div class="dash-kpi-label">优势培育对象</div>
+          <div class="dash-kpi-change" style="color:var(--primary-dark);">↑ 本月+56</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 全校态势 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📈</span>全校关注规模趋势</div>
+          <div id="line-dash" style="width:100%;height:180px;background:var(--gray-50);border-radius:8px;overflow:visible;"></div>
+          <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;font-size:12px;color:var(--gray-500);">
+            <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#3b82f6;display:inline-block;border-radius:2px;"></span>学业进展</span>
+            <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#f59e0b;display:inline-block;border-radius:2px;"></span>生活规律</span>
+            <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#8b5cf6;display:inline-block;border-radius:2px;"></span>保障支持</span>
+          </div>
+        </div>
+
+        <!-- 全校五育 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">⭐</span>全校五育总体态势
+            <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">全校均值 · 满分100</span>
+          </div>
+          <div style="display:flex;gap:16px;align-items:flex-start;">
+            <div style="flex-shrink:0;">
+              <svg id="radar-dash" width="210" height="210" viewBox="0 0 210 210" style="overflow:visible;"></svg>
+            </div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-size:11px;color:var(--gray-400);margin-bottom:8px;">五维均值与参考线对比</div>
+              <div style="display:flex;flex-direction:column;gap:9px;">
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                    <span style="color:var(--gray-600);">德育均值</span><span style="font-weight:700;color:var(--gray-800);">77</span>
+                  </div>
+                  <div style="height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:77%;background:var(--primary);border-radius:4px;"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                    <span style="color:var(--gray-600);">智育均值</span><span style="font-weight:700;color:var(--accent);">80</span>
+                  </div>
+                  <div style="height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:80%;background:var(--blue);border-radius:4px;"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                    <span style="color:var(--gray-600);">体育均值</span><span style="font-weight:700;color:var(--orange);">62 ⚠</span>
+                  </div>
+                  <div style="height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:62%;background:var(--orange);border-radius:4px;"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                    <span style="color:var(--gray-600);">美育均值</span><span style="font-weight:700;color:var(--orange);">58 ⚠</span>
+                  </div>
+                  <div style="height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:58%;background:var(--orange);border-radius:4px;"></div></div>
+                </div>
+                <div>
+                  <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:4px;">
+                    <span style="color:var(--gray-600);">劳育均值</span><span style="font-weight:700;color:var(--gray-800);">73</span>
+                  </div>
+                  <div style="height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:73%;background:var(--primary);border-radius:4px;"></div></div>
+                </div>
+              </div>
+              <div class="alert alert-warn" style="margin-top:12px;margin-bottom:0;padding:8px 10px;">
+                <span>⚠️</span><span style="font-size:11px;">体育（62）与美育（58）显著低于其他维度，建议由学生处统筹开展专项活动推广。</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 学院对比 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">🏫</span>各学院关注对象规模对比
+          <span style="font-size:12px;font-weight:400;color:var(--gray-400);margin-left:8px;">（以关注人数占学院学生比例排序）</span>
+        </div>
+        <div class="grid-2" style="gap:20px;">
+          <div>
+            <div style="font-size:12px;color:var(--gray-400);margin-bottom:8px;">关注人数</div>
+            <div class="college-rank-item">
+              <div class="rank-num top3">1</div>
+              <div class="college-name">信息工程</div>
+              <div class="college-bar-wrap"><div class="college-bar-fill" style="width:65%;background:var(--orange);"></div></div>
+              <div class="college-val">228人</div>
+              <div class="college-pct">12.3%</div>
+            </div>
+            <div class="college-rank-item">
+              <div class="rank-num top3">2</div>
+              <div class="college-name">商学院</div>
+              <div class="college-bar-wrap"><div class="college-bar-fill" style="width:55%;background:var(--blue);"></div></div>
+              <div class="college-val">186人</div>
+              <div class="college-pct">10.8%</div>
+            </div>
+            <div class="college-rank-item">
+              <div class="rank-num top3">3</div>
+              <div class="college-name">理学院</div>
+              <div class="college-bar-wrap"><div class="college-bar-fill" style="width:50%;background:var(--blue);"></div></div>
+              <div class="college-val">164人</div>
+              <div class="college-pct">10.2%</div>
+            </div>
+            <div class="college-rank-item">
+              <div class="rank-num">4</div>
+              <div class="college-name">文学院</div>
+              <div class="college-bar-wrap"><div class="college-bar-fill" style="width:42%;background:var(--primary);"></div></div>
+              <div class="college-val">138人</div>
+              <div class="college-pct">9.4%</div>
+            </div>
+            <div class="college-rank-item">
+              <div class="rank-num">5</div>
+              <div class="college-name">教育学院</div>
+              <div class="college-bar-wrap"><div class="college-bar-fill" style="width:35%;background:var(--primary);"></div></div>
+              <div class="college-val">112人</div>
+              <div class="college-pct">8.6%</div>
+            </div>
+            <div class="college-rank-item">
+              <div class="rank-num">6</div>
+              <div class="college-name">体育学院</div>
+              <div class="college-bar-wrap"><div class="college-bar-fill" style="width:28%;background:var(--primary);"></div></div>
+              <div class="college-val">88人</div>
+              <div class="college-pct">7.2%</div>
+            </div>
+          </div>
+          <div>
+            <div style="font-size:12px;color:var(--gray-400);margin-bottom:8px;">月度关注人数变化趋势（近6个月）</div>
+            <div id="line-college-trend" style="width:100%;height:180px;background:var(--gray-50);border-radius:8px;overflow:visible;"></div>
+            <div style="display:flex;gap:10px;margin-top:8px;flex-wrap:wrap;font-size:11px;color:var(--gray-500);">
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#2ecc87;display:inline-block;border-radius:2px;"></span>信息工程</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#3b82f6;display:inline-block;border-radius:2px;"></span>商学院</span>
+              <span style="display:flex;align-items:center;gap:4px;"><span style="width:12px;height:3px;background:#f59e0b;display:inline-block;border-radius:2px;"></span>理学院</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 近期重点变化 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📢</span>近期重点变化</div>
+          <div class="news-item">
+            <div class="news-dot" style="background:var(--orange);"></div>
+            <div><div class="news-content">全校学业进展关注人数较上月增加22人，大三年级增幅最明显</div><div class="news-time">2025-03-25</div></div>
+          </div>
+          <div class="news-item">
+            <div class="news-dot" style="background:var(--primary);"></div>
+            <div><div class="news-content">新生适应关注人数较1月减少38人，大一年级整体进入稳定阶段</div><div class="news-time">2025-03-20</div></div>
+          </div>
+          <div class="news-item">
+            <div class="news-dot" style="background:var(--blue);"></div>
+            <div><div class="news-content">信息工程学院大四毕业风险学生9人，已协调辅导员开展逐一约谈</div><div class="news-time">2025-03-18</div></div>
+          </div>
+          <div class="news-item">
+            <div class="news-dot" style="background:var(--primary);"></div>
+            <div><div class="news-content">本学期已识别优势发展培育对象1024人，较上学期提升12%</div><div class="news-time">2025-03-15</div></div>
+          </div>
+          <div class="news-item">
+            <div class="news-dot" style="background:var(--orange);"></div>
+            <div><div class="news-content">生活保障支持专题：全校消费波动提示112人，已通知各学院辅导员关注</div><div class="news-time">2025-03-10</div></div>
+          </div>
+        </div>
+
+        <!-- 专题入口 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">🔍</span>重点专题快速入口</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="topic-entry" onclick="location.href='topic-analysis.html'">
+              <div class="te-icon">📚</div>
+              <div class="te-body">
+                <div class="te-name">学业进展专题</div>
+                <div class="te-count">全校 324 人，本月↑22</div>
+              </div>
+              <div class="te-trend"><span class="tag tag-orange">需关注</span></div>
+              <div class="te-arrow">→</div>
+            </div>
+            <div class="topic-entry" onclick="location.href='topic-analysis.html'">
+              <div class="te-icon">🎓</div>
+              <div class="te-body">
+                <div class="te-name">毕业阶段专题</div>
+                <div class="te-count">全校大四 42 人存在毕业风险</div>
+              </div>
+              <div class="te-trend"><span class="tag tag-red">重点关注</span></div>
+              <div class="te-arrow">→</div>
+            </div>
+            <div class="topic-entry" onclick="location.href='college-analysis.html'">
+              <div class="te-icon">🏫</div>
+              <div class="te-body">
+                <div class="te-name">学院下钻分析</div>
+                <div class="te-count">查看各学院详细情况</div>
+              </div>
+              <div class="te-trend"><span class="tag tag-blue">分析</span></div>
+              <div class="te-arrow">→</div>
+            </div>
+            <div class="topic-entry" onclick="location.href='effect-analysis.html'">
+              <div class="te-icon">✅</div>
+              <div class="te-body">
+                <div class="te-name">支持成效分析</div>
+                <div class="te-count">本学期改善率 38.9%</div>
+              </div>
+              <div class="te-trend"><span class="tag tag-green">良好</span></div>
+              <div class="te-arrow">→</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  drawRadar('radar-dash', ['德育', '智育', '体育', '美育', '劳育'],
+    [77, 80, 62, 58, 73], '#2ecc87');
+  drawInteractiveLineChart('line-dash',
+    [
+      { name: '学业进展', color: '#3b82f6', values: [302, 312, 334, 318, 310, 324] },
+      { name: '生活规律', color: '#f59e0b', values: [188, 202, 228, 218, 214, 220] },
+      { name: '保障支持', color: '#8b5cf6', values: [98, 106, 112, 108, 110, 112] },
+    ],
+    ['10月', '11月', '12月', '1月', '2月', '3月'],
+    { height: 180 }
+  );
+  drawInteractiveLineChart('line-college-trend',
+    [
+      { name: '信息工程', color: '#2ecc87', values: [210, 218, 230, 222, 220, 228] },
+      { name: '商学院', color: '#3b82f6', values: [172, 178, 190, 184, 182, 186] },
+      { name: '理学院', color: '#f59e0b', values: [158, 162, 168, 162, 160, 164] },
+    ],
+    ['10月', '11月', '12月', '1月', '2月', '3月'],
+    { height: 180 }
+  );
+});
+</script>
+</body>
+</html>

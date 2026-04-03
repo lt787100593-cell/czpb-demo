@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>带班总览 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .attention-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+      border-left: 4px solid transparent;
+    }
+    .attention-card:hover { box-shadow: var(--shadow-md); }
+    .attention-card.study { border-left-color: var(--blue); }
+    .attention-card.life { border-left-color: var(--orange); }
+    .attention-card.support { border-left-color: var(--purple); }
+    .attention-card.newstd { border-left-color: var(--primary); }
+    .attention-card.grad { border-left-color: var(--red); }
+    .attention-card.talent { border-left-color: #f59e0b; }
+
+    .ac-icon { font-size: 22px; }
+    .ac-body { flex: 1; }
+    .ac-name { font-size: 13px; font-weight: 600; color: var(--gray-700); }
+    .ac-count { font-size: 22px; font-weight: 800; color: var(--gray-800); }
+    .ac-count .unit { font-size: 13px; font-weight: 400; color: var(--gray-400); }
+    .ac-change { font-size: 11px; color: var(--gray-400); }
+    .ac-arrow { font-size: 16px; color: var(--gray-300); }
+
+    .student-quick-list {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .sq-item {
+      border: 1px solid var(--gray-200);
+      border-radius: var(--radius-sm);
+      padding: 12px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .sq-item:hover { border-color: var(--primary); background: var(--primary-light); }
+    .sq-body { flex: 1; min-width: 0; }
+    .sq-name { font-size: 13px; font-weight: 600; color: var(--gray-800); }
+    .sq-meta { font-size: 11px; color: var(--gray-400); margin-top: 2px; }
+    .sq-tag { font-size: 11px; }
+    .sq-change { font-size: 11px; color: var(--gray-500); margin-top: 3px; }
+    .sq-arrow { font-size: 14px; color: var(--gray-300); }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="counselor" data-active="counselor-overview"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <span class="current-page">带班学生总览</span>
+      </div>
+      <div class="topbar-actions">
+        <select class="filter-select"><option>2024-2025学年上学期</option><option>2023-2024学年下学期</option></select>
+        <select class="filter-select"><option>全部班级</option><option>软件工程3班</option><option>软件工程4班</option></select>
+        <span class="topbar-date">2025-03-26</span>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- KPI卡 -->
+      <div class="stat-grid grid-5 section-gap">
+        <div class="stat-card green">
+          <div class="stat-label">负责学生总数</div>
+          <div class="stat-value">86<span class="unit">人</span></div>
+          <div class="stat-change neutral">跨2个班级</div>
+        </div>
+        <div class="stat-card orange">
+          <div class="stat-label">重点关注人数</div>
+          <div class="stat-value">18<span class="unit">人</span></div>
+          <div class="stat-change down">↑ 较上月 +3</div>
+        </div>
+        <div class="stat-card blue">
+          <div class="stat-label">学业进展关注</div>
+          <div class="stat-value">12<span class="unit">人</span></div>
+          <div class="stat-change neutral">占 14%</div>
+        </div>
+        <div class="stat-card purple" style="--purple:#8b5cf6;">
+          <div class="stat-label">生活规律波动</div>
+          <div class="stat-value">8<span class="unit">人</span></div>
+          <div class="stat-change neutral">本月新增2人</div>
+        </div>
+        <div class="stat-card green">
+          <div class="stat-label">优势发展培育</div>
+          <div class="stat-value">10<span class="unit">人</span></div>
+          <div class="stat-change up">↑ 建议重点培养</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 关注场景入口 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📋</span>成长支持关注场景</div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <div class="attention-card study" onclick="location.href='counselor-list.html'">
+              <div class="ac-icon">📚</div>
+              <div class="ac-body">
+                <div class="ac-name">学业进展关注</div>
+                <div class="ac-count">12<span class="unit"> 人</span></div>
+                <div class="ac-change">挂科风险・修读滞后・成绩下滑</div>
+              </div>
+              <div class="ac-arrow">→</div>
+            </div>
+            <div class="attention-card life" onclick="location.href='counselor-list.html'">
+              <div class="ac-icon">🏠</div>
+              <div class="ac-body">
+                <div class="ac-name">生活规律波动</div>
+                <div class="ac-count">8<span class="unit"> 人</span></div>
+                <div class="ac-change">作息波动・在宿规律变化</div>
+              </div>
+              <div class="ac-arrow">→</div>
+            </div>
+            <div class="attention-card support" onclick="location.href='counselor-list.html'">
+              <div class="ac-icon">💰</div>
+              <div class="ac-body">
+                <div class="ac-name">生活保障支持</div>
+                <div class="ac-count">5<span class="unit"> 人</span></div>
+                <div class="ac-change">消费波动・保障关注</div>
+              </div>
+              <div class="ac-arrow">→</div>
+            </div>
+            <div class="attention-card newstd" onclick="location.href='counselor-list.html'">
+              <div class="ac-icon">🌱</div>
+              <div class="ac-body">
+                <div class="ac-name">新生适应关注</div>
+                <div class="ac-count">4<span class="unit"> 人</span></div>
+                <div class="ac-change">课堂参与偏低・活动融入不足</div>
+              </div>
+              <div class="ac-arrow">→</div>
+            </div>
+            <div class="attention-card talent" onclick="location.href='counselor-list.html'">
+              <div class="ac-icon">🌟</div>
+              <div class="ac-body">
+                <div class="ac-name">优势发展培育</div>
+                <div class="ac-count">10<span class="unit"> 人</span></div>
+                <div class="ac-change">多维优秀・重点培养</div>
+              </div>
+              <div class="ac-arrow">→</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 五育分布 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">⭐</span>班级五育结构总览
+            <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">班级均值 · 满分100</span>
+          </div>
+          <svg id="radar-class" width="220" height="220" viewBox="0 0 220 220" style="display:block;margin:0 auto;overflow:visible;"></svg>
+          <div style="display:flex;flex-direction:column;gap:6px;margin-top:14px;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="width:28px;font-size:11px;color:var(--gray-500);">德育</span>
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:79%;background:var(--primary);border-radius:4px;"></div></div>
+              <span style="font-size:13px;font-weight:700;color:var(--gray-800);width:24px;text-align:right;">79</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="width:28px;font-size:11px;color:var(--gray-500);">智育</span>
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:82%;background:var(--blue);border-radius:4px;"></div></div>
+              <span style="font-size:13px;font-weight:700;color:var(--accent);width:24px;text-align:right;">82</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="width:28px;font-size:11px;color:var(--gray-500);">体育</span>
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:62%;background:var(--orange);border-radius:4px;"></div></div>
+              <span style="font-size:13px;font-weight:700;color:var(--orange);width:24px;text-align:right;">62</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="width:28px;font-size:11px;color:var(--gray-500);">美育</span>
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:55%;background:var(--orange);border-radius:4px;"></div></div>
+              <span style="font-size:13px;font-weight:700;color:var(--orange);width:24px;text-align:right;">55</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="width:28px;font-size:11px;color:var(--gray-500);">劳育</span>
+              <div style="flex:1;height:7px;background:var(--gray-100);border-radius:4px;overflow:hidden;"><div style="height:100%;width:74%;background:var(--primary);border-radius:4px;"></div></div>
+              <span style="font-size:13px;font-weight:700;color:var(--gray-800);width:24px;text-align:right;">74</span>
+            </div>
+          </div>
+          <div class="alert alert-warn" style="margin-top:12px;margin-bottom:0;padding:8px 10px;">
+            <span>⚠️</span><span style="font-size:12px;">体育（62）和美育（55）为当前班级整体短板，建议加强相关活动动员。</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 重点学生速览 -->
+      <div class="card section-gap">
+        <div class="card-title"><span class="title-icon">👥</span>近期重点关注学生速览
+          <span class="title-extra" onclick="location.href='counselor-list.html'">查看完整名单 →</span>
+        </div>
+        <div class="student-quick-list">
+          <div class="sq-item" onclick="location.href='student-detail.html'">
+            <div class="student-avatar">李</div>
+            <div class="sq-body">
+              <div class="sq-name">李同学 <span class="tag tag-orange sq-tag">学业关注</span></div>
+              <div class="sq-meta">软件3班 · 9栋204室</div>
+              <div class="sq-change">连续两门课成绩下滑，修读进度偏慢</div>
+            </div>
+            <div class="sq-arrow">→</div>
+          </div>
+          <div class="sq-item" onclick="location.href='student-detail.html'">
+            <div class="student-avatar" style="background:linear-gradient(135deg,#3b82f6,#1d4ed8);">王</div>
+            <div class="sq-body">
+              <div class="sq-name">王同学 <span class="tag tag-blue sq-tag">生活规律</span></div>
+              <div class="sq-meta">软件4班 · 11栋312室</div>
+              <div class="sq-change">近14天作息规律波动较明显</div>
+            </div>
+            <div class="sq-arrow">→</div>
+          </div>
+          <div class="sq-item" onclick="location.href='student-detail.html'">
+            <div class="student-avatar" style="background:linear-gradient(135deg,#8b5cf6,#6d28d9);">赵</div>
+            <div class="sq-body">
+              <div class="sq-name">赵同学 <span class="tag tag-purple sq-tag">保障支持</span></div>
+              <div class="sq-meta">软件3班 · 9栋401室</div>
+              <div class="sq-change">生活消费较历史均值明显下降</div>
+            </div>
+            <div class="sq-arrow">→</div>
+          </div>
+          <div class="sq-item" onclick="location.href='student-detail.html'">
+            <div class="student-avatar" style="background:linear-gradient(135deg,#f59e0b,#d97706);">陈</div>
+            <div class="sq-body">
+              <div class="sq-name">陈同学 <span class="tag tag-orange sq-tag">离校待核</span></div>
+              <div class="sq-meta">软件4班 · 11栋108室</div>
+              <div class="sq-change">连续5天无校园行为记录，需核验</div>
+            </div>
+            <div class="sq-arrow">→</div>
+          </div>
+          <div class="sq-item" onclick="location.href='student-detail.html'">
+            <div class="student-avatar" style="background:linear-gradient(135deg,#2ecc87,#1a7f5c);">刘</div>
+            <div class="sq-body">
+              <div class="sq-name">刘同学 <span class="tag tag-green sq-tag">优势培育</span></div>
+              <div class="sq-meta">软件3班 · 9栋506室</div>
+              <div class="sq-change">学业成绩优秀，综合素质全面发展</div>
+            </div>
+            <div class="sq-arrow">→</div>
+          </div>
+          <div class="sq-item" onclick="location.href='student-detail.html'">
+            <div class="student-avatar" style="background:linear-gradient(135deg,#ef4444,#dc2626);">孙</div>
+            <div class="sq-body">
+              <div class="sq-name">孙同学 <span class="tag tag-orange sq-tag">新生适应</span></div>
+              <div class="sq-meta">软件4班 · 11栋202室</div>
+              <div class="sq-change">课堂参与率偏低，活动参与极少</div>
+            </div>
+            <div class="sq-arrow">→</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 班级整体趋势 -->
+      <div class="card">
+        <div class="card-title"><span class="title-icon">📈</span>班级关注规模趋势（近6个月）
+          <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">2024年10月 — 2025年3月 · 悬停查看数值</span>
+        </div>
+        <div id="line-class" style="width:100%;height:200px;background:var(--gray-50);border-radius:8px;overflow:visible;"></div>
+        <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap;">
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--gray-500);"><span style="width:14px;height:3px;background:#3b82f6;display:inline-block;border-radius:2px;"></span>学业关注</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--gray-500);"><span style="width:14px;height:3px;background:#f59e0b;display:inline-block;border-radius:2px;"></span>生活规律</span>
+          <span style="display:flex;align-items:center;gap:4px;font-size:12px;color:var(--gray-500);"><span style="width:14px;height:3px;background:#8b5cf6;display:inline-block;border-radius:2px;"></span>保障支持</span>
+        </div>
+        <div class="alert alert-info" style="margin-top:10px;margin-bottom:0;">
+          <span>💡</span><span>学业关注在12月（期末备考前）出现峰值，生活规律波动与开学节奏有关，整体趋势平稳。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  drawRadar('radar-class', ['德育', '智育', '体育', '美育', '劳育'],
+    [79, 82, 62, 55, 74], '#3b82f6');
+  drawInteractiveLineChart('line-class',
+    [
+      { name: '学业关注', color: '#3b82f6', values: [14, 13, 15, 11, 13, 12] },
+      { name: '生活规律', color: '#f59e0b', values: [6, 5, 8, 7, 9, 8] },
+      { name: '保障支持', color: '#8b5cf6', values: [4, 5, 4, 6, 5, 5] },
+    ],
+    ['10月', '11月', '12月', '1月', '2月', '3月'],
+    { height: 200 }
+  );
+});
+</script>
+</body>
+</html>

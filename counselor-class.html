@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>班级群体分析 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .class-compare-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .class-compare-bar:last-child { border-bottom: none; }
+    .ccb-label { width: 80px; font-size: 13px; color: var(--gray-600); flex-shrink: 0; }
+    .ccb-bar-group { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+    .ccb-bar-row { display: flex; align-items: center; gap: 6px; }
+    .ccb-bar-tag { width: 32px; font-size: 10px; color: var(--gray-400); }
+    .ccb-bar-wrap { flex: 1; height: 8px; background: var(--gray-100); border-radius: 4px; overflow: hidden; }
+    .ccb-bar-fill { height: 100%; border-radius: 4px; }
+    .ccb-val { width: 28px; font-size: 11px; font-weight: 600; color: var(--gray-700); text-align: right; }
+
+    .scene-stat-card {
+      background: #fff;
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      box-shadow: var(--shadow);
+      border-top: 3px solid var(--gray-200);
+    }
+    .scene-stat-card.blue { border-top-color: var(--blue); }
+    .scene-stat-card.orange { border-top-color: var(--orange); }
+    .scene-stat-card.purple { border-top-color: var(--purple); }
+    .scene-stat-card.green { border-top-color: var(--primary); }
+    .scene-stat-card.red { border-top-color: var(--red); }
+    .ssc-name { font-size: 12px; color: var(--gray-500); margin-bottom: 4px; }
+    .ssc-val { font-size: 22px; font-weight: 800; color: var(--gray-800); }
+    .ssc-pct { font-size: 12px; color: var(--gray-400); }
+    .ssc-change { font-size: 11px; margin-top: 4px; }
+
+    .dorm-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .dorm-item:last-child { border-bottom: none; }
+    .dorm-name { width: 80px; font-size: 13px; color: var(--gray-700); font-weight: 500; }
+    .dorm-bar-wrap { flex: 1; height: 10px; background: var(--gray-100); border-radius: 5px; overflow: hidden; }
+    .dorm-bar-fill { height: 100%; border-radius: 5px; }
+    .dorm-val { width: 50px; text-align: right; font-size: 13px; font-weight: 600; color: var(--gray-800); }
+    .dorm-status { width: 80px; text-align: right; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="counselor" data-active="counselor-class"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <a href="counselor-overview.html" style="color:inherit;text-decoration:none;">带班总览</a>
+        <span>›</span>
+        <span class="current-page">班级群体分析</span>
+      </div>
+      <div class="topbar-actions">
+        <select class="filter-select"><option>软件工程3班（43人）</option><option>软件工程4班（43人）</option><option>全部班级（86人）</option></select>
+        <select class="filter-select"><option>2024-2025上学期</option><option>2023-2024下学期</option></select>
+        <button class="btn btn-outline btn-sm" onclick="showToast('已导出班级分析简报','success')">导出简报</button>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <!-- 场景分布 -->
+      <div class="stat-grid grid-5 section-gap">
+        <div class="scene-stat-card blue">
+          <div class="ssc-name">学业进展关注</div>
+          <div class="ssc-val">7<span style="font-size:13px;font-weight:400;color:var(--gray-400);"> 人</span></div>
+          <div class="ssc-pct">占班级 16.3%</div>
+          <div class="ssc-change" style="color:var(--orange);">↑ 本月+2</div>
+        </div>
+        <div class="scene-stat-card orange">
+          <div class="ssc-name">生活规律波动</div>
+          <div class="ssc-val">4<span style="font-size:13px;font-weight:400;color:var(--gray-400);"> 人</span></div>
+          <div class="ssc-pct">占班级 9.3%</div>
+          <div class="ssc-change" style="color:var(--gray-400);">→ 持平</div>
+        </div>
+        <div class="scene-stat-card purple">
+          <div class="ssc-name">生活保障支持</div>
+          <div class="ssc-val">3<span style="font-size:13px;font-weight:400;color:var(--gray-400);"> 人</span></div>
+          <div class="ssc-pct">占班级 7.0%</div>
+          <div class="ssc-change" style="color:var(--primary-dark);">↓ 本月-1</div>
+        </div>
+        <div class="scene-stat-card red">
+          <div class="ssc-name">校园融入不足</div>
+          <div class="ssc-val">2<span style="font-size:13px;font-weight:400;color:var(--gray-400);"> 人</span></div>
+          <div class="ssc-pct">占班级 4.7%</div>
+          <div class="ssc-change" style="color:var(--gray-400);">→ 持平</div>
+        </div>
+        <div class="scene-stat-card green">
+          <div class="ssc-name">优势发展培育</div>
+          <div class="ssc-val">6<span style="font-size:13px;font-weight:400;color:var(--gray-400);"> 人</span></div>
+          <div class="ssc-pct">占班级 14.0%</div>
+          <div class="ssc-change" style="color:var(--primary-dark);">↑ 本月+1</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 五育结构 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">⭐</span>班级五育结构分布</div>
+          <div class="tabs-container">
+            <div class="tabs"><div class="tab-item">班级均值</div><div class="tab-item">与专业对比</div></div>
+            <div class="tab-panel">
+              <div class="class-compare-bar">
+                <div class="ccb-label">德育</div>
+                <div class="ccb-bar-group">
+                  <div class="ccb-bar-row">
+                    <div class="ccb-bar-tag">班级</div>
+                    <div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:79%;background:var(--primary);"></div></div>
+                    <div class="ccb-val">79</div>
+                  </div>
+                </div>
+              </div>
+              <div class="class-compare-bar">
+                <div class="ccb-label">智育</div>
+                <div class="ccb-bar-group">
+                  <div class="ccb-bar-row">
+                    <div class="ccb-bar-tag">班级</div>
+                    <div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:82%;background:var(--blue);"></div></div>
+                    <div class="ccb-val">82</div>
+                  </div>
+                </div>
+              </div>
+              <div class="class-compare-bar">
+                <div class="ccb-label">体育</div>
+                <div class="ccb-bar-group">
+                  <div class="ccb-bar-row">
+                    <div class="ccb-bar-tag">班级</div>
+                    <div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:62%;background:var(--orange);"></div></div>
+                    <div class="ccb-val">62</div>
+                  </div>
+                </div>
+              </div>
+              <div class="class-compare-bar">
+                <div class="ccb-label">美育</div>
+                <div class="ccb-bar-group">
+                  <div class="ccb-bar-row">
+                    <div class="ccb-bar-tag">班级</div>
+                    <div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:55%;background:var(--purple);"></div></div>
+                    <div class="ccb-val">55</div>
+                  </div>
+                </div>
+              </div>
+              <div class="class-compare-bar">
+                <div class="ccb-label">劳育</div>
+                <div class="ccb-bar-group">
+                  <div class="ccb-bar-row">
+                    <div class="ccb-bar-tag">班级</div>
+                    <div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:74%;background:var(--primary);"></div></div>
+                    <div class="ccb-val">74</div>
+                  </div>
+                </div>
+              </div>
+              <div class="alert alert-warn" style="margin-top:12px;margin-bottom:0;">
+                <span>⚠️</span><span>体育和美育为班级整体短板，建议加强相关活动动员。</span>
+              </div>
+            </div>
+            <div class="tab-panel">
+              <div class="class-compare-bar">
+                <div class="ccb-label">德育</div>
+                <div class="ccb-bar-group">
+                  <div class="ccb-bar-row"><div class="ccb-bar-tag">班级</div><div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:79%;background:var(--primary);"></div></div><div class="ccb-val">79</div></div>
+                  <div class="ccb-bar-row"><div class="ccb-bar-tag">专业均</div><div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:76%;background:var(--gray-300);"></div></div><div class="ccb-val">76</div></div>
+                </div>
+              </div>
+              <div class="class-compare-bar">
+                <div class="ccb-label">智育</div>
+                <div class="ccb-bar-group">
+                  <div class="ccb-bar-row"><div class="ccb-bar-tag">班级</div><div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:82%;background:var(--blue);"></div></div><div class="ccb-val">82</div></div>
+                  <div class="ccb-bar-row"><div class="ccb-bar-tag">专业均</div><div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:80%;background:var(--gray-300);"></div></div><div class="ccb-val">80</div></div>
+                </div>
+              </div>
+              <div class="class-compare-bar">
+                <div class="ccb-label">体育</div>
+                <div class="ccb-bar-group">
+                  <div class="ccb-bar-row"><div class="ccb-bar-tag">班级</div><div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:62%;background:var(--orange);"></div></div><div class="ccb-val">62</div></div>
+                  <div class="ccb-bar-row"><div class="ccb-bar-tag">专业均</div><div class="ccb-bar-wrap"><div class="ccb-bar-fill" style="width:68%;background:var(--gray-300);"></div></div><div class="ccb-val">68</div></div>
+                </div>
+              </div>
+              <div class="alert alert-info" style="margin-top:12px;margin-bottom:0;"><span>ℹ️</span><span>与专业均值相比，体育略低，整体差异不大。</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 宿舍热力图 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">🏠</span>宿舍关注分布</div>
+          <div style="font-size:12px;color:var(--gray-400);margin-bottom:10px;">各宿舍综合关注指数（越高越需关注）</div>
+          <div class="dorm-item">
+            <div class="dorm-name">9栋204室</div>
+            <div class="dorm-bar-wrap"><div class="dorm-bar-fill" style="width:85%;background:var(--red);"></div></div>
+            <div class="dorm-val">85</div>
+            <div class="dorm-status"><span class="tag tag-red">高</span></div>
+          </div>
+          <div class="dorm-item">
+            <div class="dorm-name">9栋112室</div>
+            <div class="dorm-bar-wrap"><div class="dorm-bar-fill" style="width:68%;background:var(--orange);"></div></div>
+            <div class="dorm-val">68</div>
+            <div class="dorm-status"><span class="tag tag-orange">中</span></div>
+          </div>
+          <div class="dorm-item">
+            <div class="dorm-name">9栋306室</div>
+            <div class="dorm-bar-wrap"><div class="dorm-bar-fill" style="width:35%;background:var(--primary);"></div></div>
+            <div class="dorm-val">35</div>
+            <div class="dorm-status"><span class="tag tag-green">低</span></div>
+          </div>
+          <div class="dorm-item">
+            <div class="dorm-name">9栋401室</div>
+            <div class="dorm-bar-wrap"><div class="dorm-bar-fill" style="width:52%;background:var(--blue);"></div></div>
+            <div class="dorm-val">52</div>
+            <div class="dorm-status"><span class="tag tag-blue">关注</span></div>
+          </div>
+          <div class="dorm-item">
+            <div class="dorm-name">9栋506室</div>
+            <div class="dorm-bar-wrap"><div class="dorm-bar-fill" style="width:18%;background:var(--primary);"></div></div>
+            <div class="dorm-val">18</div>
+            <div class="dorm-status"><span class="tag tag-green">优</span></div>
+          </div>
+          <div class="hint-text">综合关注指数为多场景叠加权重结果，越高表示该宿舍需关注学生数量和程度越强。</div>
+        </div>
+      </div>
+
+      <div class="grid-2 section-gap">
+        <!-- 学业分层 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">📊</span>学业分层结构</div>
+          <div id="academic-bar"></div>
+          <div style="margin-top:16px;">
+            <div style="font-size:12px;font-weight:600;color:var(--gray-600);margin-bottom:6px;">学业关注人数近6个月变化 <span style="font-size:11px;font-weight:400;color:var(--gray-400);">· 悬停查看数值</span></div>
+            <div id="line-class-trend" style="width:100%;height:150px;background:var(--gray-50);border-radius:8px;overflow:visible;"></div>
+            <div style="display:flex;gap:10px;margin-top:6px;">
+              <span style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--gray-500);"><span style="width:12px;height:3px;background:#3b82f6;display:inline-block;border-radius:2px;"></span>学业关注人数</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 活动参与 -->
+        <div class="card">
+          <div class="card-title"><span class="title-icon">🎯</span>校园参与结构</div>
+          <div id="activity-bar"></div>
+          <div class="alert alert-info" style="margin-top:14px;margin-bottom:0;">
+            <span>💡</span>
+            <span>本班活动参与较活跃的学生约6人，建议带动整体参与氛围，特别关注从不参与的5人。</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 班级对比 -->
+      <div class="card">
+        <div class="card-title"><span class="title-icon">📋</span>与上学期纵向对比
+          <span style="margin-left:auto;font-size:11px;font-weight:400;color:var(--gray-400);">本学期 vs 上学期 · 同班级口径</span>
+        </div>
+        <div class="grid-4" style="margin-bottom:14px;">
+          <div style="padding:14px;border:1px solid var(--gray-200);border-radius:var(--radius-sm);background:var(--orange-light);">
+            <div style="font-size:11px;color:var(--gray-500);">学业关注人数</div>
+            <div style="font-size:24px;font-weight:800;color:var(--gray-800);margin:4px 0;">7<span style="font-size:12px;font-weight:400;color:var(--gray-400);margin-left:2px;">人</span></div>
+            <div style="font-size:11px;color:var(--orange);">↑ 较上学期 +3人</div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">期末考试临近，关注趋势偏高</div>
+          </div>
+          <div style="padding:14px;border:1px solid var(--primary-mid);border-radius:var(--radius-sm);background:var(--primary-light);">
+            <div style="font-size:11px;color:var(--gray-500);">班级智育均值</div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);margin:4px 0;">82</div>
+            <div style="font-size:11px;color:var(--primary-dark);">↑ 较上学期 +2分</div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">整体学习氛围良好，持续向好</div>
+          </div>
+          <div style="padding:14px;border:1px solid var(--primary-mid);border-radius:var(--radius-sm);background:var(--primary-light);">
+            <div style="font-size:11px;color:var(--gray-500);">活动参与率</div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);margin:4px 0;">65%</div>
+            <div style="font-size:11px;color:var(--primary-dark);">↑ 较上学期 +8%</div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">班级文化建设效果初步显现</div>
+          </div>
+          <div style="padding:14px;border:1px solid var(--primary-mid);border-radius:var(--radius-sm);background:var(--primary-light);">
+            <div style="font-size:11px;color:var(--gray-500);">优势培育人数</div>
+            <div style="font-size:24px;font-weight:800;color:var(--accent);margin:4px 0;">6<span style="font-size:12px;font-weight:400;color:var(--gray-400);margin-left:2px;">人</span></div>
+            <div style="font-size:11px;color:var(--primary-dark);">↑ 较上学期 +2人</div>
+            <div style="font-size:11px;color:var(--gray-400);margin-top:2px;">建议推荐优势学生参与竞赛培育</div>
+          </div>
+        </div>
+        <div class="alert alert-info" style="margin-bottom:0;">
+          <span>💡</span>
+          <span>总体而言，班级本学期智育和活动参与均有提升，但学业关注人数增加3人，建议在期末前开展针对性学业帮扶，优先关注成绩下滑风险学生。</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  drawBarChart('academic-bar', [
+    { label: '绩点4.0+（优秀）', value: 6 },
+    { label: '绩点3.0-4.0（良好）', value: 22 },
+    { label: '绩点2.0-3.0（合格）', value: 12 },
+    { label: '绩点2.0以下（待关注）', value: 3 },
+  ], 30, '#3b82f6');
+
+  drawBarChart('activity-bar', [
+    { label: '每月参与3次以上（活跃）', value: 6 },
+    { label: '每月参与1-2次（一般）', value: 18 },
+    { label: '偶尔参与（较少）', value: 14 },
+    { label: '几乎不参与（偏弱）', value: 5 },
+  ], 25, '#2ecc87');
+
+  drawInteractiveLineChart('line-class-trend',
+    [{ name: '学业关注人数', color: '#3b82f6', values: [4, 5, 6, 4, 5, 7] }],
+    ['10月', '11月', '12月', '1月', '2月', '3月'],
+    { height: 150 }
+  );
+});
+</script>
+</body>
+</html>

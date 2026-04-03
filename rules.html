@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <title>规则与口径说明 - 学生成长画像平台</title>
+  <link rel="stylesheet" href="css/common.css">
+  <style>
+    .rule-card {
+      background: #fff;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-bottom: 14px;
+      overflow: hidden;
+    }
+    .rule-card-header {
+      padding: 14px 18px;
+      background: var(--gray-50);
+      border-bottom: 1px solid var(--gray-200);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+    .rule-card-header:hover { background: var(--primary-light); }
+    .rule-card-header .rule-icon { font-size: 18px; }
+    .rule-card-header .rule-name { font-size: 14px; font-weight: 600; color: var(--gray-800); flex: 1; }
+    .rule-card-header .rule-toggle { font-size: 16px; color: var(--gray-400); transition: transform 0.2s; }
+    .rule-card-body { padding: 16px 18px; display: none; }
+    .rule-card-body.open { display: block; }
+    .rule-card-header.open .rule-toggle { transform: rotate(90deg); }
+
+    .rule-table { width: 100%; border-collapse: collapse; }
+    .rule-table th { background: var(--gray-50); font-size: 12px; font-weight: 600; color: var(--gray-500); padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--gray-200); }
+    .rule-table td { padding: 10px 12px; font-size: 13px; color: var(--gray-700); border-bottom: 1px solid var(--gray-100); vertical-align: top; }
+    .rule-table tr:last-child td { border-bottom: none; }
+
+    .source-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--gray-100);
+    }
+    .source-item:last-child { border-bottom: none; }
+    .source-icon { font-size: 20px; width: 36px; height: 36px; background: var(--gray-50); border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .source-name { font-size: 13px; font-weight: 600; color: var(--gray-800); margin-bottom: 3px; }
+    .source-desc { font-size: 12px; color: var(--gray-500); line-height: 1.6; }
+    .source-type { font-size: 11px; }
+
+    .perm-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 8px;
+    }
+    .perm-item.student-p { background: #f0fdf9; border: 1px solid var(--primary-mid); }
+    .perm-item.counselor-p { background: var(--blue-light); border: 1px solid #bfdbfe; }
+    .perm-item.dean-p { background: var(--purple-light); border: 1px solid #ddd6fe; }
+    .perm-item.leader-p { background: var(--orange-light); border: 1px solid #fed7aa; }
+    .perm-avatar { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; color: #fff; flex-shrink: 0; }
+  </style>
+</head>
+<body>
+<div class="layout">
+  <aside class="sidebar" data-role="leader" data-active="rules"></aside>
+
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-breadcrumb">
+        <span class="current-page">规则与数据口径说明</span>
+      </div>
+      <div class="topbar-actions">
+        <span class="topbar-date">最后更新：2025-03-01</span>
+        <button class="btn btn-outline btn-sm" onclick="showToast('已导出规则说明文档','success')">导出文档</button>
+      </div>
+    </div>
+
+    <div class="content fade-in">
+      <div class="alert alert-info" style="margin-bottom:20px;">
+        <span>ℹ️</span>
+        <span>本页面统一说明平台各项评价规则、关注场景识别口径、数据来源和权限边界，增强结果可解释性和用户使用信任感。所有识别结果仅作为支持研判的参考依据，不替代人工判断。</span>
+      </div>
+
+      <div class="tabs-container">
+        <div class="tabs">
+          <div class="tab-item">五育评价规则</div>
+          <div class="tab-item">关注场景识别口径</div>
+          <div class="tab-item">数据来源说明</div>
+          <div class="tab-item">权限与可见边界</div>
+          <div class="tab-item">使用说明</div>
+        </div>
+
+        <!-- 五育评价规则 -->
+        <div class="tab-panel">
+          <div class="rule-card">
+            <div class="rule-card-header" onclick="toggleRule(this)">
+              <span class="rule-icon">🌟</span>
+              <span class="rule-name">德育表现</span>
+              <span class="tag tag-green">5项指标 · 月度更新</span>
+              <span class="rule-toggle">›</span>
+            </div>
+            <div class="rule-card-body">
+              <table class="rule-table">
+                <thead><tr><th>指标名称</th><th>参考规则</th><th>数据来源</th><th>权重</th></tr></thead>
+                <tbody>
+                  <tr><td>志愿服务</td><td>按累计志愿时长折算，每季度更新</td><td>第二课堂、团委系统</td><td>25%</td></tr>
+                  <tr><td>集体活动参与</td><td>按参与次数和出勤记录折算</td><td>团委系统、班级系统</td><td>20%</td></tr>
+                  <tr><td>荣誉表现</td><td>奖励加分，处分减分</td><td>学工系统</td><td>25%</td></tr>
+                  <tr><td>诚信记录</td><td>学术诚信与校规执行情况</td><td>教务、考试管理系统</td><td>20%</td></tr>
+                  <tr><td>奖惩综合</td><td>正向奖励加权，违纪情况减分</td><td>学工系统</td><td>10%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-card-header" onclick="toggleRule(this)">
+              <span class="rule-icon">📚</span>
+              <span class="rule-name">智育发展</span>
+              <span class="tag tag-blue">5项指标 · 学期/月度更新</span>
+              <span class="rule-toggle">›</span>
+            </div>
+            <div class="rule-card-body">
+              <table class="rule-table">
+                <thead><tr><th>指标名称</th><th>参考规则</th><th>数据来源</th><th>权重</th></tr></thead>
+                <tbody>
+                  <tr><td>学业成绩</td><td>加权平均绩点，按学分加权</td><td>教务系统</td><td>40%</td></tr>
+                  <tr><td>修读进度</td><td>已修学分/应修学分对比</td><td>教务系统、培养方案</td><td>25%</td></tr>
+                  <tr><td>图书馆投入</td><td>月均到馆次数/借阅量折算</td><td>图书馆系统</td><td>15%</td></tr>
+                  <tr><td>课堂出勤</td><td>出勤率折算</td><td>考勤系统</td><td>10%</td></tr>
+                  <tr><td>学习平台使用</td><td>月均使用时长</td><td>学习平台数据</td><td>10%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-card-header" onclick="toggleRule(this)">
+              <span class="rule-icon">🏃</span>
+              <span class="rule-name">体育健康</span>
+              <span class="tag tag-orange">4项指标 · 学期/月度更新</span>
+              <span class="rule-toggle">›</span>
+            </div>
+            <div class="rule-card-body">
+              <table class="rule-table">
+                <thead><tr><th>指标名称</th><th>参考规则</th><th>数据来源</th><th>权重</th></tr></thead>
+                <tbody>
+                  <tr><td>体测成绩</td><td>按国家体测标准折算</td><td>体育部门/体测系统</td><td>35%</td></tr>
+                  <tr><td>体育课成绩</td><td>期末总成绩折算</td><td>教务系统</td><td>30%</td></tr>
+                  <tr><td>课外锻炼参与</td><td>校园跑、场馆记录折算</td><td>场馆预约、校园跑</td><td>25%</td></tr>
+                  <tr><td>运动规律性</td><td>近30天运动频次与规律性</td><td>行为数据综合</td><td>10%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-card-header" onclick="toggleRule(this)">
+              <span class="rule-icon">🎨</span><span class="rule-name">美育参与</span>
+              <span class="tag tag-purple">3项指标 · 学期更新</span>
+              <span class="rule-toggle">›</span>
+            </div>
+            <div class="rule-card-body">
+              <table class="rule-table">
+                <thead><tr><th>指标名称</th><th>参考规则</th><th>数据来源</th><th>权重</th></tr></thead>
+                <tbody>
+                  <tr><td>艺术课程</td><td>美育选修课程修读情况</td><td>教务系统</td><td>40%</td></tr>
+                  <tr><td>文艺活动参与</td><td>文艺表演、展览参与次数</td><td>团委系统、活动平台</td><td>35%</td></tr>
+                  <tr><td>文化项目参与</td><td>文化节、音乐会、讲座等</td><td>活动平台、团委</td><td>25%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="rule-card">
+            <div class="rule-card-header" onclick="toggleRule(this)">
+              <span class="rule-icon">🤝</span><span class="rule-name">劳育实践</span>
+              <span class="tag tag-gray">4项指标 · 学期更新</span>
+              <span class="rule-toggle">›</span>
+            </div>
+            <div class="rule-card-body">
+              <table class="rule-table">
+                <thead><tr><th>指标名称</th><th>参考规则</th><th>数据来源</th><th>权重</th></tr></thead>
+                <tbody>
+                  <tr><td>劳动教育课程</td><td>劳动教育必修课完成情况</td><td>劳教平台/教务</td><td>35%</td></tr>
+                  <tr><td>社会实践</td><td>假期或在校实践项目参与</td><td>实践平台、学工</td><td>35%</td></tr>
+                  <tr><td>志愿劳动</td><td>志愿服务中的劳动类项目</td><td>第二课堂、团委</td><td>20%</td></tr>
+                  <tr><td>勤工助学</td><td>参与勤工助学岗位情况</td><td>资助系统</td><td>10%</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="alert alert-success" style="margin-top:14px;">
+            <span>💡</span>
+            <span>五育评价权重由学校统一配置，各学院可在授权范围内进行调整。数据缺失字段采用容错处理，不纳入扣分计算。评价等级分为A/B+/B/C+/C/D六档。</span>
+          </div>
+        </div>
+
+        <!-- 关注场景识别口径 -->
+        <div class="tab-panel">
+          <table class="rule-table" style="border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden;">
+            <thead><tr><th>场景名称</th><th>场景定义</th><th>识别规则（参考口径）</th><th>数据来源</th><th>关注等级</th></tr></thead>
+            <tbody>
+              <tr><td><span class="tag tag-blue">挂科风险</span></td><td>当前学期存在课程不及格风险</td><td>平时成绩+期中成绩综合低于60，或历史挂科2门以上且本期成绩偏低</td><td>教务系统</td><td>高/中</td></tr>
+              <tr><td><span class="tag tag-blue">修读滞后</span></td><td>修读进度低于同专业正常水平</td><td>已修学分/应修学分低于同届同专业均值10%以上</td><td>教务、培养方案</td><td>中</td></tr>
+              <tr><td><span class="tag tag-blue">成绩连续下滑</span></td><td>连续学期或月度成绩明显下降</td><td>两个及以上重点课程成绩较上次评测下降10分以上</td><td>教务系统</td><td>中</td></tr>
+              <tr><td><span class="tag tag-orange">作息规律波动</span></td><td>宿舍出入规律明显变化</td><td>近14天深夜出入次数较本人历史均值增加50%以上</td><td>宿舍门禁</td><td>中</td></tr>
+              <tr><td><span class="tag tag-orange">离校状态待核验</span></td><td>长期无校园行为记录</td><td>连续5个工作日无课堂、门禁、消费记录且无请假记录</td><td>教务、门禁、一卡通</td><td>高</td></tr>
+              <tr><td><span class="tag tag-purple">消费波动提示</span></td><td>日常消费明显偏低</td><td>近30天日均食堂消费低于本人3个月历史均值30%以上</td><td>一卡通消费</td><td>中</td></tr>
+              <tr><td><span class="tag tag-green">新生适应关注</span></td><td>大一新生入学适应不足</td><td>出勤率<85%且活动参与<2次/月且图书馆到馆<2次/月</td><td>考勤、活动、图书馆</td><td>中</td></tr>
+              <tr><td><span class="tag tag-red">毕业阶段风险</span></td><td>大四毕业要求达成不足</td><td>距毕业<1年，毕业要求达成率<70%</td><td>教务、培养方案</td><td>高</td></tr>
+              <tr><td><span class="tag tag-gray">校园融入不足</span></td><td>校园参与极少</td><td>连续1个月活动参与=0且第二课堂学时=0</td><td>团委、活动平台</td><td>低</td></tr>
+              <tr><td><span class="tag tag-green">优势发展培育</span></td><td>综合表现突出</td><td>绩点前15%且五育两项以上达到A级，或有校级及以上竞赛奖项</td><td>教务、学工、竞赛系统</td><td>优势</td></tr>
+            </tbody>
+          </table>
+          <div class="alert alert-warn" style="margin-top:14px;">
+            <span>⚠️</span>
+            <span>所有识别规则均为辅助判断，不直接对学生做出任何结论性认定。辅导员需结合实际情况进行二次研判后再开展关怀。系统输出的是"支持提示"，不是"问题判定"。</span>
+          </div>
+        </div>
+
+        <!-- 数据来源 -->
+        <div class="tab-panel">
+          <div class="grid-2" style="gap:12px;">
+            <div class="source-item">
+              <div class="source-icon">🎓</div>
+              <div>
+                <div class="source-name">教务系统</div>
+                <div class="source-desc">提供成绩、学分修读、课程安排、培养方案、出勤记录等数据。</div>
+                <span class="source-type tag tag-green">ETL接入 · 每日更新</span>
+              </div>
+            </div>
+            <div class="source-item">
+              <div class="source-icon">🏫</div>
+              <div>
+                <div class="source-name">学工系统</div>
+                <div class="source-desc">提供奖励、处分、荣誉、班级档案等数据。</div>
+                <span class="source-type tag tag-green">ETL接入 · 每日更新</span>
+              </div>
+            </div>
+            <div class="source-item">
+              <div class="source-icon">💳</div>
+              <div>
+                <div class="source-name">一卡通消费系统</div>
+                <div class="source-desc">提供食堂、超市、洗澡等消费记录，用于生活规律和保障支持分析。</div>
+                <span class="source-type tag tag-blue">ETL接入 · 每日</span>
+              </div>
+            </div>
+            <div class="source-item">
+              <div class="source-icon">🚪</div>
+              <div>
+                <div class="source-name">宿舍门禁系统</div>
+                <div class="source-desc">提供宿舍出入时间记录，用于作息规律和离校状态分析。</div>
+                <span class="source-type tag tag-blue">ETL接入 · 每日</span>
+              </div>
+            </div>
+            <div class="source-item">
+              <div class="source-icon">📚</div>
+              <div>
+                <div class="source-name">图书馆系统</div>
+                <div class="source-desc">提供到馆次数、借阅记录、在馆时长等学习投入数据。</div>
+                <span class="source-type tag tag-blue">ETL接入 · 每日</span>
+              </div>
+            </div>
+            <div class="source-item">
+              <div class="source-icon">🎯</div>
+              <div>
+                <div class="source-name">第二课堂/团委系统</div>
+                <div class="source-desc">提供活动参与、志愿服务、第二课堂学时记录等数据。</div>
+                <span class="source-type tag tag-green">ETL接入 · 周更</span>
+              </div>
+            </div>
+            <div class="source-item">
+              <div class="source-icon">💰</div>
+              <div>
+                <div class="source-name">资助管理系统</div>
+                <div class="source-desc">提供资助对象台账、资助金发放、勤工助学记录等。</div>
+                <span class="source-type tag tag-orange">批量导入 · 月度</span>
+              </div>
+            </div>
+            <div class="source-item">
+              <div class="source-icon">💼</div>
+              <div>
+                <div class="source-name">就业系统</div>
+                <div class="source-desc">提供招聘参与、实习记录、求职意向等就业相关数据。</div>
+                <span class="source-type tag tag-orange">批量导入 · 月度</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 权限说明 -->
+        <div class="tab-panel">
+          <div style="display:flex;flex-direction:column;gap:10px;">
+            <div class="perm-item student-p">
+              <div class="perm-avatar" style="background:var(--primary);">学</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:4px;">学生本人</div>
+                <div style="font-size:12px;color:var(--gray-600);">可查看：本人全部画像信息、五育评价、学业数据、校园生活数据、提醒与推荐。<br>
+                不可查看：他人画像、管理端规则、名单详情。</div>
+              </div>
+            </div>
+            <div class="perm-item counselor-p">
+              <div class="perm-avatar" style="background:var(--blue);">师</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:4px;">辅导员/班主任</div>
+                <div style="font-size:12px;color:var(--gray-600);">可查看：权限范围内学生的个人画像（含大部分数据）、重点关注名单、班级群体分析。<br>
+                不可查看：心理中心台账（需协同授权）、其他学院学生数据。<br>
+                <strong>敏感字段：</strong>消费明细仅展示趋势变化，不显示具体金额。</div>
+              </div>
+            </div>
+            <div class="perm-item dean-p">
+              <div class="perm-avatar" style="background:var(--purple);">院</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:4px;">学院管理角色</div>
+                <div style="font-size:12px;color:var(--gray-600);">可查看：本学院全部画像分布、专题分析、群体趋势、重点对象名单。<br>
+                可下钻：至班级，再至个人画像（部分字段受限）。<br>
+                不可查看：宿舍门禁明细、消费明细、心理协同数据。</div>
+              </div>
+            </div>
+            <div class="perm-item leader-p">
+              <div class="perm-avatar" style="background:var(--orange);">领</div>
+              <div>
+                <div style="font-size:13px;font-weight:600;color:var(--gray-800);margin-bottom:4px;">校级领导</div>
+                <div style="font-size:12px;color:var(--gray-600);">可查看：全校总体态势、学院对比、趋势分析、重点专题摘要。<br>
+                不可查看：学生个人画像明细，不支持个人级检索（保护学生隐私）。</div>
+              </div>
+            </div>
+          </div>
+          <div class="alert alert-warn" style="margin-top:14px;">
+            <span>🔒</span>
+            <span>根据《个人信息保护法》，宗教信仰、民族、医疗健康、精准行踪轨迹、金融账户等属于高度敏感信息，平台不纳入通用画像展示，相关专项数据仅在有特定目的、充分必要性且严格授权下，由特定角色访问，并全程留痕审计。</span>
+          </div>
+        </div>
+
+        <!-- 使用说明 -->
+        <div class="tab-panel">
+          <div class="grid-2" style="gap:14px;">
+            <div style="padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius);">
+              <div style="font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:10px;">📊 数据更新频率</div>
+              <div style="font-size:13px;color:var(--gray-600);line-height:2;">
+                <div>每日更新：学业出勤、消费、门禁等行为类数据</div>
+                <div>每周更新：活动参与、第二课堂等积累类数据</div>
+                <div>每月更新：五育综合评价、标签、综合等级</div>
+                <div>每学期更新：绩点、学分、荣誉等学籍数据</div>
+              </div>
+            </div>
+            <div style="padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius);">
+              <div style="font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:10px;">⚠️ 结果使用边界</div>
+              <div style="font-size:13px;color:var(--gray-600);line-height:2;">
+                <div>✅ 可以用于：辅助老师判断和研判</div>
+                <div>✅ 可以用于：前移识别支持需求</div>
+                <div>✅ 可以用于：辅助政策与资源配置</div>
+                <div>❌ 不可用于：直接对学生作出结论性处置</div>
+                <div>❌ 不可用于：作为纪律处分的唯一依据</div>
+                <div>❌ 不可用于：替代心理专业评估</div>
+              </div>
+            </div>
+            <div style="padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius);">
+              <div style="font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:10px;">🔄 规则调整说明</div>
+              <div style="font-size:13px;color:var(--gray-600);line-height:1.8;">规则调整需经数据管理部门审批，并留存调整记录。各学院可提出调整建议，但需经业务主管部门确认后方可生效。</div>
+            </div>
+            <div style="padding:16px;border:1px solid var(--gray-200);border-radius:var(--radius);">
+              <div style="font-size:14px;font-weight:700;color:var(--gray-800);margin-bottom:10px;">📩 反馈与投诉</div>
+              <div style="font-size:13px;color:var(--gray-600);line-height:1.8;">如学生对个人数据展示有异议，可向辅导员反映或联系数据管理部门。平台保留修正机制，数据异议可在7个工作日内完成核查反馈。</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/common.js"></script>
+<script src="js/sidebar.js"></script>
+<script>
+function toggleRule(header) {
+  const body = header.nextElementSibling;
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open');
+  header.classList.toggle('open');
+}
+</script>
+</body>
+</html>
