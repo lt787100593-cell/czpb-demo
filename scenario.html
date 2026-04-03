@@ -1,0 +1,1721 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>学生成长画像与精准支持分析平台 · 场景说明书</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --green:       #2ecc87;
+      --green-dark:  #1a7f5c;
+      --green-mid:   #a7f3d0;
+      --green-light: #f0fdf9;
+      --blue:        #3b82f6;
+      --blue-dark:   #1d4ed8;
+      --blue-light:  #eff6ff;
+      --orange:      #f59e0b;
+      --orange-dark: #92400e;
+      --orange-light:#fffbeb;
+      --purple:      #8b5cf6;
+      --purple-dark: #5b21b6;
+      --purple-light:#f5f3ff;
+      --red:         #ef4444;
+      --red-light:   #fef2f2;
+      --gray-50:     #f9fafb;
+      --gray-100:    #f3f4f6;
+      --gray-200:    #e5e7eb;
+      --gray-300:    #d1d5db;
+      --gray-400:    #9ca3af;
+      --gray-500:    #6b7280;
+      --gray-600:    #4b5563;
+      --gray-700:    #374151;
+      --gray-800:    #1f2937;
+      --gray-900:    #111827;
+      --radius:      12px;
+      --radius-sm:   8px;
+      --shadow:      0 2px 10px rgba(0,0,0,0.07);
+      --shadow-md:   0 6px 24px rgba(0,0,0,0.10);
+      --shadow-lg:   0 16px 48px rgba(0,0,0,0.14);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: -apple-system, 'PingFang SC', 'Microsoft YaHei', 'Segoe UI', sans-serif;
+      background: #f5f7fa;
+      color: var(--gray-800);
+      line-height: 1.65;
+    }
+
+    /* ===== STICKY NAV ===== */
+    .site-nav {
+      position: sticky; top: 0; z-index: 200;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-200);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+    .nav-inner {
+      max-width: 1120px; margin: 0 auto;
+      display: flex; align-items: center; height: 58px;
+      padding: 0 24px; gap: 24px;
+    }
+    .nav-brand {
+      display: flex; align-items: center; gap: 9px;
+      font-size: 14px; font-weight: 800; color: var(--green-dark);
+      white-space: nowrap; text-decoration: none;
+    }
+    .brand-dot {
+      width: 9px; height: 9px; border-radius: 50%; background: var(--green);
+      box-shadow: 0 0 0 3px rgba(46,204,135,.25);
+      animation: pulse 2s infinite;
+    }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 0 3px rgba(46,204,135,.25)} 50%{box-shadow:0 0 0 6px rgba(46,204,135,.1)} }
+
+    .nav-links {
+      display: flex; gap: 2px; flex: 1; overflow-x: auto;
+    }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-link {
+      white-space: nowrap; padding: 5px 14px;
+      border-radius: 20px; font-size: 13px;
+      color: var(--gray-500); text-decoration: none;
+      transition: all .15s;
+    }
+    .nav-link:hover, .nav-link.active {
+      background: var(--green-light); color: var(--green-dark); font-weight: 600;
+    }
+    .nav-cta {
+      flex-shrink: 0;
+      display: flex; align-items: center; gap: 7px;
+      background: var(--green); color: #fff;
+      font-size: 13px; font-weight: 700;
+      padding: 8px 20px; border-radius: 22px;
+      text-decoration: none;
+      box-shadow: 0 3px 12px rgba(46,204,135,.4);
+      transition: all .2s;
+    }
+    .nav-cta:hover { transform: translateY(-1px); box-shadow: 0 5px 18px rgba(46,204,135,.5); }
+
+    /* ===== HERO ===== */
+    .hero {
+      background: linear-gradient(135deg, #081e14 0%, #0d3d2c 35%, #155e3e 65%, #1fa666 100%);
+      color: #fff;
+      padding: 88px 24px 96px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image:
+        radial-gradient(circle at 20% 30%, rgba(46,204,135,0.12) 0%, transparent 50%),
+        radial-gradient(circle at 80% 70%, rgba(59,130,246,0.08) 0%, transparent 50%);
+    }
+    .hero-grid-bg {
+      position: absolute; inset: 0;
+      background-image: linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+      background-size: 48px 48px;
+    }
+    .hero-inner { position: relative; max-width: 860px; margin: 0 auto; }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 40px; padding: 6px 18px; font-size: 12px;
+      color: rgba(255,255,255,0.85); margin-bottom: 24px;
+      backdrop-filter: blur(8px); letter-spacing: .5px;
+    }
+    .badge-dot {
+      width: 7px; height: 7px; border-radius: 50%; background: var(--green);
+      animation: blink 1.8s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .hero-title {
+      font-size: clamp(30px, 5.5vw, 52px);
+      font-weight: 900; line-height: 1.18; letter-spacing: .5px;
+      margin-bottom: 22px;
+    }
+    .hero-title em { font-style: normal; color: #6ee7b7; }
+    .hero-desc {
+      font-size: 17px; color: rgba(255,255,255,.76);
+      max-width: 640px; margin: 0 auto 40px; line-height: 1.9;
+    }
+    .hero-tags {
+      display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-bottom: 44px;
+    }
+    .hero-tag {
+      background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.18);
+      border-radius: 30px; padding: 7px 20px; font-size: 13px;
+      color: rgba(255,255,255,.9); backdrop-filter: blur(6px);
+      transition: background .2s;
+    }
+    .hero-tag:hover { background: rgba(255,255,255,.18); }
+
+    .hero-stats {
+      display: flex; gap: 0; justify-content: center; flex-wrap: wrap;
+      border: 1px solid rgba(255,255,255,.15); border-radius: var(--radius);
+      background: rgba(255,255,255,.07); backdrop-filter: blur(8px);
+      max-width: 680px; margin: 0 auto; overflow: hidden;
+    }
+    .hero-stat {
+      flex: 1; min-width: 120px;
+      padding: 22px 16px; text-align: center;
+      border-right: 1px solid rgba(255,255,255,.1);
+    }
+    .hero-stat:last-child { border-right: none; }
+    .hero-stat .hs-num {
+      font-size: 32px; font-weight: 900; color: #6ee7b7; line-height: 1;
+      margin-bottom: 6px;
+    }
+    .hero-stat .hs-label {
+      font-size: 12px; color: rgba(255,255,255,.6);
+    }
+
+    /* ===== SECTION WRAPPER ===== */
+    .section { padding: 72px 24px; }
+    .section-white { background: #fff; }
+    .section-gray  { background: #f5f7fa; }
+    .section-inner { max-width: 1120px; margin: 0 auto; }
+
+    .section-eyebrow {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 11px; font-weight: 800; letter-spacing: 2.5px;
+      text-transform: uppercase; color: var(--green-dark);
+      background: var(--green-light); border: 1px solid var(--green-mid);
+      border-radius: 30px; padding: 4px 14px; margin-bottom: 16px;
+    }
+    .section-title {
+      font-size: clamp(22px, 3.2vw, 32px); font-weight: 900;
+      color: var(--gray-900); margin-bottom: 12px; line-height: 1.3;
+    }
+    .section-sub {
+      font-size: 15px; color: var(--gray-500); max-width: 580px;
+      line-height: 1.85; margin-bottom: 8px;
+    }
+
+    .divider { height: 1px; background: var(--gray-200); }
+
+    /* ===== 1. PROBLEM SCENE ===== */
+    .problem-layout {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+      margin-top: 44px; align-items: start;
+    }
+    .problem-intro {
+      padding-right: 12px;
+    }
+    .problem-intro h3 {
+      font-size: 18px; font-weight: 800; color: var(--gray-800); margin-bottom: 14px;
+    }
+    .problem-intro p {
+      font-size: 14px; color: var(--gray-600); line-height: 1.85; margin-bottom: 16px;
+    }
+    .pain-list { list-style: none; }
+    .pain-item {
+      display: flex; gap: 12px; align-items: flex-start;
+      padding: 12px 14px; border-radius: var(--radius-sm);
+      margin-bottom: 10px; border-left: 3px solid transparent;
+    }
+    .pain-item.red    { background: #fef2f2; border-left-color: #ef4444; }
+    .pain-item.orange { background: #fffbeb; border-left-color: #f59e0b; }
+    .pain-item.blue   { background: #eff6ff; border-left-color: #3b82f6; }
+    .pain-item.purple { background: #f5f3ff; border-left-color: #8b5cf6; }
+    .pain-icon { font-size: 20px; flex-shrink: 0; line-height: 1.3; }
+    .pain-body h4 { font-size: 13px; font-weight: 700; color: var(--gray-800); margin-bottom: 4px; }
+    .pain-body p  { font-size: 12px; color: var(--gray-500); line-height: 1.7; }
+
+    .solution-box {
+      background: linear-gradient(135deg, #f0fdf9, #d1fae5);
+      border: 1.5px solid var(--green-mid);
+      border-radius: var(--radius); padding: 28px 24px;
+    }
+    .solution-box h3 {
+      font-size: 16px; font-weight: 800; color: var(--green-dark); margin-bottom: 16px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .solution-step {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0; border-bottom: 1px solid rgba(46,204,135,.2);
+    }
+    .solution-step:last-child { border-bottom: none; }
+    .ss-num {
+      width: 24px; height: 24px; border-radius: 50%;
+      background: var(--green-dark); color: #fff;
+      font-size: 11px; font-weight: 800;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0; margin-top: 2px;
+    }
+    .ss-body h4 { font-size: 13px; font-weight: 700; color: var(--gray-800); }
+    .ss-body p  { font-size: 12px; color: var(--gray-600); margin-top: 3px; line-height: 1.6; }
+
+    /* ===== 2. USERS ===== */
+    .users-grid {
+      display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; margin-top: 44px;
+    }
+    .user-card {
+      border-radius: var(--radius); padding: 26px 20px;
+      box-shadow: var(--shadow); border: 1.5px solid transparent;
+      transition: box-shadow .2s, transform .2s;
+      position: relative; overflow: hidden;
+    }
+    .user-card::before {
+      content: '';
+      position: absolute; top: -30px; right: -30px;
+      width: 90px; height: 90px; border-radius: 50%;
+      opacity: .1;
+    }
+    .user-card:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+    .user-card.stu { background: #f0fdf9; border-color: var(--green-mid); }
+    .user-card.stu::before { background: var(--green); }
+    .user-card.cou { background: #eff6ff; border-color: #bfdbfe; }
+    .user-card.cou::before { background: var(--blue); }
+    .user-card.dea { background: #f5f3ff; border-color: #ddd6fe; }
+    .user-card.dea::before { background: var(--purple); }
+    .user-card.lea { background: #fffbeb; border-color: #fde68a; }
+    .user-card.lea::before { background: var(--orange); }
+    .user-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; font-weight: 900; color: #fff; margin-bottom: 14px;
+    }
+    .stu .user-avatar { background: linear-gradient(135deg, var(--green), var(--green-dark)); }
+    .cou .user-avatar { background: linear-gradient(135deg, #60a5fa, var(--blue-dark)); }
+    .dea .user-avatar { background: linear-gradient(135deg, #a78bfa, var(--purple-dark)); }
+    .lea .user-avatar { background: linear-gradient(135deg, #fcd34d, var(--orange-dark)); }
+    .user-role {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 2px 10px; border-radius: 12px; margin-bottom: 8px; letter-spacing: .5px;
+    }
+    .stu .user-role { background: #d1fae5; color: var(--green-dark); }
+    .cou .user-role { background: #dbeafe; color: var(--blue-dark); }
+    .dea .user-role { background: #ede9fe; color: var(--purple-dark); }
+    .lea .user-role { background: #fef3c7; color: var(--orange-dark); }
+    .user-name { font-size: 15px; font-weight: 800; margin-bottom: 12px; }
+    .stu .user-name { color: var(--green-dark); }
+    .cou .user-name { color: var(--blue-dark); }
+    .dea .user-name { color: var(--purple-dark); }
+    .lea .user-name { color: var(--orange-dark); }
+    .user-features { list-style: none; }
+    .user-features li {
+      font-size: 12px; color: var(--gray-600);
+      padding: 5px 0; border-bottom: 1px solid rgba(0,0,0,.05);
+      display: flex; align-items: flex-start; gap: 6px;
+    }
+    .user-features li:last-child { border-bottom: none; }
+    .user-features li::before {
+      content: '✓'; font-weight: 900; font-size: 11px; flex-shrink: 0; margin-top: 1px;
+    }
+    .stu .user-features li::before { color: var(--green); }
+    .cou .user-features li::before { color: var(--blue); }
+    .dea .user-features li::before { color: var(--purple); }
+    .lea .user-features li::before { color: var(--orange); }
+
+    .perm-box {
+      margin-top: 28px;
+      background: var(--gray-50); border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius); padding: 22px 24px;
+      display: flex; gap: 40px; align-items: center; flex-wrap: wrap;
+    }
+    .perm-pyramid {
+      flex-shrink: 0;
+    }
+    .perm-level {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 6px;
+    }
+    .perm-bar { height: 32px; border-radius: 4px; display: flex; align-items: center; padding: 0 14px; font-size: 12px; font-weight: 700; color: #fff; }
+    .perm-note { font-size: 11px; color: var(--gray-500); }
+
+    .perm-desc { flex: 1; min-width: 220px; }
+    .perm-desc h4 { font-size: 14px; font-weight: 800; color: var(--gray-800); margin-bottom: 10px; }
+    .perm-desc p  { font-size: 13px; color: var(--gray-600); line-height: 1.75; }
+
+    /* ===== 3. MODULES ===== */
+    .module-tabs { display: flex; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; margin-top: 40px; }
+    .mtab {
+      padding: 8px 20px; border-radius: 24px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid var(--gray-200);
+      background: #fff; color: var(--gray-500); transition: all .15s;
+    }
+    .mtab.active.green  { background: var(--green); border-color: var(--green); color: #fff; box-shadow: 0 2px 12px rgba(46,204,135,.35); }
+    .mtab.active.blue   { background: var(--blue);  border-color: var(--blue);  color: #fff; box-shadow: 0 2px 12px rgba(59,130,246,.35); }
+    .mtab.active.purple { background: var(--purple);border-color: var(--purple);color: #fff; box-shadow: 0 2px 12px rgba(139,92,246,.35); }
+    .mtab.active.orange { background: var(--orange);border-color: var(--orange);color: #fff; box-shadow: 0 2px 12px rgba(245,158,11,.35); }
+
+    .module-panel { display: none; }
+    .module-panel.active { display: block; animation: fadeIn .25s ease; }
+    @keyframes fadeIn { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+    .module-layout {
+      display: grid; grid-template-columns: 260px 1fr; gap: 0;
+      border-radius: var(--radius); overflow: hidden;
+      box-shadow: var(--shadow-md); border: 1px solid var(--gray-200);
+    }
+    .module-sidebar {
+      padding: 32px 24px;
+      display: flex; flex-direction: column; justify-content: space-between;
+    }
+    .ms-green  { background: linear-gradient(160deg, #0d3d2c, #1a7f5c); }
+    .ms-blue   { background: linear-gradient(160deg, #1e3a8a, #2563eb); }
+    .ms-purple { background: linear-gradient(160deg, #3b0764, #7c3aed); }
+    .ms-orange { background: linear-gradient(160deg, #78350f, #d97706); }
+    .module-sidebar .ms-icon { font-size: 36px; margin-bottom: 14px; }
+    .module-sidebar h3  { font-size: 18px; font-weight: 900; color: #fff; margin-bottom: 8px; }
+    .module-sidebar .ms-sub { font-size: 13px; color: rgba(255,255,255,.7); line-height: 1.65; }
+    .ms-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      margin-top: 24px; color: rgba(255,255,255,.85); font-size: 13px;
+      text-decoration: none; transition: color .15s;
+    }
+    .ms-link:hover { color: #fff; }
+
+    .module-main { background: #fff; padding: 28px; }
+    .mod-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .mod-card {
+      padding: 16px 14px; border: 1px solid var(--gray-100);
+      border-radius: var(--radius-sm); background: var(--gray-50);
+      transition: all .18s; cursor: default;
+      position: relative; overflow: hidden;
+    }
+    .mod-card::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      opacity: 0; transition: opacity .2s;
+    }
+    .mod-card.green::after  { background: var(--green); }
+    .mod-card.blue::after   { background: var(--blue); }
+    .mod-card.purple::after { background: var(--purple); }
+    .mod-card.orange::after { background: var(--orange); }
+    .mod-card:hover { border-color: var(--gray-300); transform: translateY(-2px); box-shadow: var(--shadow); }
+    .mod-card:hover::after { opacity: 1; }
+    .mc-icon { font-size: 18px; margin-bottom: 8px; }
+    .mc-name { font-size: 13px; font-weight: 800; color: var(--gray-800); margin-bottom: 6px; }
+    .mc-desc { font-size: 11px; color: var(--gray-400); line-height: 1.65; }
+    .mc-link {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 11px; font-weight: 700; margin-top: 8px;
+      text-decoration: none; opacity: 0; transition: opacity .18s;
+    }
+    .mod-card:hover .mc-link { opacity: 1; }
+    .green  .mc-link { color: var(--green-dark); }
+    .blue   .mc-link { color: var(--blue-dark); }
+    .purple .mc-link { color: var(--purple-dark); }
+    .orange .mc-link { color: var(--orange-dark); }
+
+    /* ===== 4. FLOW ===== */
+    .flow-role-tabs {
+      display: flex; gap: 8px; margin-top: 40px; margin-bottom: 32px; flex-wrap: wrap;
+    }
+    .frtab {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 20px; border-radius: 28px; font-size: 13px; font-weight: 600;
+      cursor: pointer; border: 1.5px solid var(--gray-200);
+      background: #fff; color: var(--gray-500); transition: all .15s;
+    }
+    .frtab.active { color: #fff; }
+    .frtab.active.green  { background: var(--green);  border-color: var(--green); }
+    .frtab.active.blue   { background: var(--blue);   border-color: var(--blue); }
+    .frtab.active.purple { background: var(--purple); border-color: var(--purple); }
+    .frtab.active.orange { background: var(--orange); border-color: var(--orange); }
+
+    .flow-panel { display: none; }
+    .flow-panel.active { display: block; animation: fadeIn .25s ease; }
+
+    .flow-timeline {
+      position: relative; padding-left: 32px;
+    }
+    .flow-timeline::before {
+      content: ''; position: absolute; left: 11px; top: 16px; bottom: 16px;
+      width: 2px; background: var(--gray-200);
+    }
+    .flow-item {
+      position: relative; margin-bottom: 20px;
+      display: flex; gap: 18px; align-items: flex-start;
+    }
+    .flow-item:last-child { margin-bottom: 0; }
+    .fi-dot {
+      position: absolute; left: -32px; top: 12px;
+      width: 22px; height: 22px; border-radius: 50%;
+      background: #fff; border: 2px solid var(--gray-200);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff;
+      transition: all .2s; flex-shrink: 0;
+    }
+    .fi-dot.green  { background: var(--green);  border-color: var(--green);  font-size: 9px; }
+    .fi-dot.blue   { background: var(--blue);   border-color: var(--blue);   font-size: 9px; }
+    .fi-dot.purple { background: var(--purple); border-color: var(--purple); font-size: 9px; }
+    .fi-dot.orange { background: var(--orange); border-color: var(--orange); font-size: 9px; }
+    .fi-content {
+      flex: 1; background: #fff; border: 1.5px solid var(--gray-200);
+      border-radius: var(--radius-sm); padding: 14px 18px;
+      box-shadow: var(--shadow); transition: border-color .2s, box-shadow .2s;
+    }
+    .fi-content:hover { border-color: var(--gray-300); box-shadow: var(--shadow-md); }
+    .fi-content h4 { font-size: 14px; font-weight: 800; color: var(--gray-800); margin-bottom: 5px; }
+    .fi-content p  { font-size: 12px; color: var(--gray-500); line-height: 1.7; }
+    .fi-tag {
+      display: inline-block; font-size: 10px; font-weight: 700;
+      padding: 2px 8px; border-radius: 8px; margin-bottom: 6px;
+    }
+    .fi-tag.green  { background: #d1fae5; color: var(--green-dark); }
+    .fi-tag.blue   { background: #dbeafe; color: var(--blue-dark); }
+    .fi-tag.purple { background: #ede9fe; color: var(--purple-dark); }
+    .fi-tag.orange { background: #fef3c7; color: var(--orange-dark); }
+
+    .flow-outcome {
+      margin-top: 28px; padding: 18px 22px;
+      border-radius: var(--radius-sm);
+      display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+    }
+    .flow-outcome.green  { background: #f0fdf9; border: 1px solid var(--green-mid); }
+    .flow-outcome.blue   { background: #eff6ff; border: 1px solid #bfdbfe; }
+    .flow-outcome.purple { background: #f5f3ff; border: 1px solid #ddd6fe; }
+    .flow-outcome.orange { background: #fffbeb; border: 1px solid #fde68a; }
+    .fo-icon { font-size: 22px; }
+    .fo-text { flex: 1; font-size: 13px; line-height: 1.7; }
+    .fo-text strong { font-weight: 800; }
+    .green  .fo-text { color: var(--green-dark); }
+    .blue   .fo-text { color: var(--blue-dark); }
+    .purple .fo-text { color: var(--purple-dark); }
+    .orange .fo-text { color: var(--orange-dark); }
+
+    /* ===== 5. DATA SOURCES ===== */
+    .data-visual {
+      margin-top: 44px;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 32px;
+      align-items: start;
+    }
+    .data-cards-grid {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px;
+    }
+    .dcard {
+      background: #fff; border-radius: var(--radius);
+      padding: 18px 14px; box-shadow: var(--shadow);
+      border-top: 3px solid transparent; transition: box-shadow .2s, transform .2s;
+    }
+    .dcard:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+    .dcard.c1 { border-top-color: #3b82f6; }
+    .dcard.c2 { border-top-color: #2ecc87; }
+    .dcard.c3 { border-top-color: #f59e0b; }
+    .dcard.c4 { border-top-color: #8b5cf6; }
+    .dcard.c5 { border-top-color: #ef4444; }
+    .dcard.c6 { border-top-color: #06b6d4; }
+    .dcard.c7 { border-top-color: #ec4899; }
+    .dcard.c8 { border-top-color: #9ca3af; }
+    .dcard .dc-ico { font-size: 22px; margin-bottom: 8px; }
+    .dcard h4 { font-size: 13px; font-weight: 800; color: var(--gray-800); margin-bottom: 8px; }
+    .dc-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .dc-tag {
+      font-size: 10px; padding: 2px 7px; border-radius: 10px;
+      background: var(--gray-100); color: var(--gray-600); font-weight: 500;
+    }
+    .data-flow-panel {
+      background: #fff; border-radius: var(--radius);
+      padding: 28px 24px; box-shadow: var(--shadow-md);
+      border: 1.5px solid var(--gray-200);
+    }
+    .dfp-title {
+      font-size: 15px; font-weight: 800; color: var(--gray-800); margin-bottom: 22px;
+      display: flex; align-items: center; gap: 9px;
+    }
+    .flow-chain { display: flex; flex-direction: column; gap: 0; }
+    .fc-node {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px; background: var(--gray-50);
+      border: 1px solid var(--gray-200); border-radius: var(--radius-sm);
+      transition: background .2s;
+    }
+    .fc-node:hover { background: var(--green-light); border-color: var(--green-mid); }
+    .fc-node .fn-icon { font-size: 20px; flex-shrink: 0; }
+    .fc-node h5 { font-size: 13px; font-weight: 800; color: var(--gray-800); }
+    .fc-node p  { font-size: 11px; color: var(--gray-500); margin-top: 2px; }
+    .fc-arrow-wrap {
+      display: flex; align-items: center; justify-content: center;
+      height: 24px;
+    }
+    .fc-arr { color: var(--green); font-size: 18px; }
+    .data-notes {
+      margin-top: 20px; display: flex; flex-wrap: wrap; gap: 8px;
+    }
+    .data-note {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 11px; color: var(--gray-500);
+      background: var(--gray-50); border: 1px solid var(--gray-200);
+      border-radius: 20px; padding: 4px 12px;
+    }
+
+    /* ===== 6. VALUE ===== */
+    .value-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 44px;
+    }
+    .vcard {
+      border-radius: var(--radius); padding: 28px 22px;
+      box-shadow: var(--shadow); border: 1.5px solid transparent;
+      transition: box-shadow .22s, transform .22s;
+      position: relative; overflow: hidden;
+    }
+    .vcard::before {
+      content: '';
+      position: absolute; bottom: -20px; right: -20px;
+      width: 80px; height: 80px; border-radius: 50%; opacity: .07;
+    }
+    .vcard:hover { box-shadow: var(--shadow-md); transform: translateY(-4px); }
+    .vcard.v1 { background: linear-gradient(135deg, #f0fdf9, #d1fae5); border-color: var(--green-mid); }
+    .vcard.v1::before { background: var(--green); }
+    .vcard.v2 { background: linear-gradient(135deg, #eff6ff, #dbeafe); border-color: #bfdbfe; }
+    .vcard.v2::before { background: var(--blue); }
+    .vcard.v3 { background: linear-gradient(135deg, #fefce8, #fef9c3); border-color: #fde68a; }
+    .vcard.v3::before { background: var(--orange); }
+    .vcard.v4 { background: linear-gradient(135deg, #f5f3ff, #ede9fe); border-color: #ddd6fe; }
+    .vcard.v4::before { background: var(--purple); }
+    .vcard.v5 { background: linear-gradient(135deg, #fff7ed, #fed7aa); border-color: #fdba74; }
+    .vcard.v5::before { background: #f97316; }
+    .vcard.v6 { background: linear-gradient(135deg, #fdf2f8, #fce7f3); border-color: #fbcfe8; }
+    .vcard.v6::before { background: #ec4899; }
+    .vc-icon { font-size: 32px; margin-bottom: 14px; }
+    .vc-title { font-size: 16px; font-weight: 900; margin-bottom: 10px; }
+    .vcard.v1 .vc-title { color: var(--green-dark); }
+    .vcard.v2 .vc-title { color: var(--blue-dark); }
+    .vcard.v3 .vc-title { color: var(--orange-dark); }
+    .vcard.v4 .vc-title { color: var(--purple-dark); }
+    .vcard.v5 .vc-title { color: #7c2d12; }
+    .vcard.v6 .vc-title { color: #831843; }
+    .vc-desc { font-size: 13px; color: var(--gray-600); line-height: 1.8; }
+    .vc-metric {
+      margin-top: 16px; padding-top: 14px;
+      border-top: 1px solid rgba(0,0,0,.07);
+      display: flex; gap: 12px; flex-wrap: wrap;
+    }
+    .vcm-item {
+      display: flex; align-items: center; gap: 5px;
+      font-size: 11px; color: var(--gray-500);
+    }
+    .vcm-num {
+      font-size: 16px; font-weight: 900; line-height: 1;
+    }
+    .vcard.v1 .vcm-num { color: var(--green-dark); }
+    .vcard.v2 .vcm-num { color: var(--blue-dark); }
+    .vcard.v3 .vcm-num { color: var(--orange-dark); }
+    .vcard.v4 .vcm-num { color: var(--purple-dark); }
+    .vcard.v5 .vcm-num { color: #7c2d12; }
+    .vcard.v6 .vcm-num { color: #831843; }
+
+    /* ===== 7. PRINCIPLES ===== */
+    .principles-grid {
+      display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 44px;
+    }
+    .pcard {
+      background: #fff; border-radius: var(--radius);
+      padding: 24px 16px; text-align: center;
+      box-shadow: var(--shadow); border: 1.5px solid var(--gray-200);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .pcard:hover { box-shadow: var(--shadow-md); transform: translateY(-3px); }
+    .pc-icon { font-size: 28px; margin-bottom: 12px; }
+    .pc-title { font-size: 14px; font-weight: 800; color: var(--gray-800); margin-bottom: 8px; }
+    .pc-desc  { font-size: 11px; color: var(--gray-500); line-height: 1.65; }
+
+    /* ===== 8. CTA ===== */
+    .cta-section {
+      background: linear-gradient(135deg, #081e14 0%, #0d3d2c 40%, #155e3e 70%, #2ecc87 100%);
+      color: #fff; text-align: center; padding: 88px 24px;
+      position: relative; overflow: hidden;
+    }
+    .cta-section::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle at 30% 50%, rgba(46,204,135,.15) 0%, transparent 60%),
+                        radial-gradient(circle at 70% 50%, rgba(59,130,246,.08) 0%, transparent 60%);
+    }
+    .cta-inner { position: relative; }
+    .cta-title { font-size: clamp(24px, 4vw, 38px); font-weight: 900; margin-bottom: 16px; }
+    .cta-sub { font-size: 15px; color: rgba(255,255,255,.72); max-width: 500px; margin: 0 auto 44px; line-height: 1.85; }
+    .cta-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .cta-btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 14px 34px; border-radius: 40px; font-size: 15px; font-weight: 800;
+      text-decoration: none; transition: all .2s;
+    }
+    .cta-btn.primary {
+      background: #fff; color: var(--green-dark);
+      box-shadow: 0 6px 24px rgba(0,0,0,.2);
+    }
+    .cta-btn.primary:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(0,0,0,.28); }
+    .cta-btn.secondary {
+      background: rgba(255,255,255,.12); color: #fff;
+      border: 1.5px solid rgba(255,255,255,.3);
+      backdrop-filter: blur(8px);
+    }
+    .cta-btn.secondary:hover { background: rgba(255,255,255,.2); transform: translateY(-2px); }
+
+    /* ===== FOOTER ===== */
+    footer {
+      background: var(--gray-900); color: rgba(255,255,255,.4);
+      text-align: center; padding: 26px 24px; font-size: 12px;
+      display: flex; align-items: center; justify-content: center; gap: 24px; flex-wrap: wrap;
+    }
+
+    /* ===== INFO BOX ===== */
+    .info-box {
+      background: var(--green-light); border: 1.5px solid var(--green-mid);
+      border-radius: var(--radius); padding: 18px 22px; margin-top: 28px;
+      display: flex; gap: 12px; align-items: flex-start;
+    }
+    .info-box .ib-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .info-box p { font-size: 13px; color: var(--green-dark); line-height: 1.75; }
+    .info-box strong { color: #0d3d2c; }
+
+    /* ===== RESPONSIVE ===== */
+    @media (max-width: 900px) {
+      .problem-layout { grid-template-columns: 1fr; }
+      .users-grid { grid-template-columns: 1fr 1fr; }
+      .module-layout { grid-template-columns: 1fr; }
+      .module-sidebar { padding: 24px; }
+      .mod-grid { grid-template-columns: 1fr 1fr; }
+      .value-grid { grid-template-columns: 1fr 1fr; }
+      .principles-grid { grid-template-columns: repeat(3, 1fr); }
+      .data-visual { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 620px) {
+      .users-grid { grid-template-columns: 1fr; }
+      .mod-grid { grid-template-columns: 1fr; }
+      .value-grid { grid-template-columns: 1fr; }
+      .principles-grid { grid-template-columns: 1fr 1fr; }
+      .data-cards-grid { grid-template-columns: 1fr; }
+      .hero-stats { flex-direction: column; }
+      .hero-stat { border-right: none; border-bottom: 1px solid rgba(255,255,255,.1); }
+      .hero-stat:last-child { border-bottom: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAV ===== -->
+<nav class="site-nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-brand">
+      <div class="brand-dot"></div>
+      学生成长画像平台
+    </a>
+    <div class="nav-links">
+      <a href="#problem"     class="nav-link">场景定位</a>
+      <a href="#users"       class="nav-link">面向对象</a>
+      <a href="#modules"     class="nav-link">功能模块</a>
+      <a href="#flow"        class="nav-link">使用流程</a>
+      <a href="#data"        class="nav-link">数据来源</a>
+      <a href="#value"       class="nav-link">业务价值</a>
+      <a href="#principles"  class="nav-link">设计原则</a>
+    </div>
+    <a href="index.html" class="nav-cta">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+      进入演示
+    </a>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">
+      <div class="badge-dot"></div>
+      高校学生工作数字化整体解决方案
+    </div>
+    <h1 class="hero-title">
+      学生<em>成长画像</em>与<br>精准支持分析平台
+    </h1>
+    <p class="hero-desc">
+      基于多源校园数据，为高校各层级学生工作角色提供<br>
+      "看得见、看得懂、用得上"的成长分析与精准支持工具，<br>
+      让育人工作从经验驱动走向<strong style="color:#6ee7b7;">数据辅助决策</strong>。
+    </p>
+    <div class="hero-tags">
+      <div class="hero-tag">🎓 学生全息成长画像</div>
+      <div class="hero-tag">📊 群体态势分析</div>
+      <div class="hero-tag">🔍 7大场景精准识别</div>
+      <div class="hero-tag">⭐ 五育发展评价体系</div>
+      <div class="hero-tag">💡 个性化支持建议</div>
+      <div class="hero-tag">🔐 分级权限管理</div>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hs-num">4</div>
+        <div class="hs-label">用户角色</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-num">14</div>
+        <div class="hs-label">功能页面</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-num">8</div>
+        <div class="hs-label">接入数据源</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-num">7</div>
+        <div class="hs-label">关注场景</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hs-num">5</div>
+        <div class="hs-label">五育维度</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== 1. 场景定位 ===== -->
+<section class="section section-white" id="problem">
+  <div class="section-inner">
+    <div class="section-eyebrow">📍 场景定位</div>
+    <h2 class="section-title">为什么需要这个平台？</h2>
+    <p class="section-sub">高校学生工作面临数据分散、关注滞后、管理粗放三大核心痛点，亟需一款能将多源数据整合为可行动洞察的工具。</p>
+
+    <div class="problem-layout">
+      <!-- 痛点 -->
+      <div class="problem-intro">
+        <h3>🔴 当前面临的核心痛点</h3>
+        <ul class="pain-list">
+          <li class="pain-item red">
+            <div class="pain-icon">😟</div>
+            <div class="pain-body">
+              <h4>信息碎片化，辅导员"看不全"</h4>
+              <p>学业、消费、作息、活动等数据散落在教务、资助、后勤等多个独立系统，辅导员无法快速形成对单个学生的整体判断，关键信息往往靠"打听"。</p>
+            </div>
+          </li>
+          <li class="pain-item orange">
+            <div class="pain-icon">⏳</div>
+            <div class="pain-body">
+              <h4>关注靠经验，介入往往"来不及"</h4>
+              <p>传统工作依赖辅导员个人感知和口口相传，成绩下滑、生活异常等早期信号难以及时捕捉，等学生主动来找老师时，问题往往已较为严重。</p>
+            </div>
+          </li>
+          <li class="pain-item blue">
+            <div class="pain-icon">📋</div>
+            <div class="pain-body">
+              <h4>汇报靠手工，管理层"看不懂趋势"</h4>
+              <p>学院和学校层面的学生状态依赖人工汇总表格，数据时效差、缺乏趋势对比，难以支撑群体性问题的研判与战略部署，学期末才能"算总账"。</p>
+            </div>
+          </li>
+          <li class="pain-item purple">
+            <div class="pain-icon">📏</div>
+            <div class="pain-body">
+              <h4>评价维度单一，五育"难以兼顾"</h4>
+              <p>现有管理体系高度聚焦学业成绩，德育、体育、美育、劳育等维度缺乏系统性评估，学生全面成长目标难以落地量化。</p>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- 解决方案 -->
+      <div>
+        <div class="solution-box">
+          <h3>✅ 平台如何解决这些问题</h3>
+
+          <div class="solution-step">
+            <div class="ss-num">1</div>
+            <div class="ss-body">
+              <h4>多源数据汇聚整合</h4>
+              <p>对接教务、学工、体育、后勤等8类校内系统，以学号为主键统一关联，形成每位学生的多维数据档案。</p>
+            </div>
+          </div>
+          <div class="solution-step">
+            <div class="ss-num">2</div>
+            <div class="ss-body">
+              <h4>五育画像动态建模</h4>
+              <p>按德智体美劳五维框架，通过加权规则引擎计算各维度分数，形成可动态更新的个人成长画像。</p>
+            </div>
+          </div>
+          <div class="solution-step">
+            <div class="ss-num">3</div>
+            <div class="ss-body">
+              <h4>7大场景智能识别</h4>
+              <p>基于学业进展、生活规律、保障支持、新生适应、校园融入、毕业阶段、优势培育7类规则自动识别需关注学生。</p>
+            </div>
+          </div>
+          <div class="solution-step">
+            <div class="ss-num">4</div>
+            <div class="ss-body">
+              <h4>分角色可视化展示</h4>
+              <p>四类用户角色各有独立视图，学生看个人画像，辅导员看班级名单，学院看群体态势，学校看全局驾驶舱。</p>
+            </div>
+          </div>
+          <div class="solution-step">
+            <div class="ss-num">5</div>
+            <div class="ss-body">
+              <h4>可解释建议推送</h4>
+              <p>每条关注识别结果均附有数据依据说明，个性化建议解释推荐原因，让用户知道"为什么"而非黑箱判断。</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="info-box" style="margin-top:16px;">
+          <div class="ib-icon">🎯</div>
+          <p><strong>核心定位：</strong>平台是面向高校学生工作的<strong>数据辅助决策工具</strong>，不替代教育工作者的判断，而是帮助各层级角色"更早看见、更准理解、更有效行动"。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== 2. 面向用户对象 ===== -->
+<section class="section section-gray" id="users">
+  <div class="section-inner">
+    <div class="section-eyebrow">👥 面向用户对象</div>
+    <h2 class="section-title">谁在使用这个平台？</h2>
+    <p class="section-sub">平台采用角色分级设计，四类用户看到不同范围、不同深度的信息，各取所需、互不越权。</p>
+
+    <div class="users-grid">
+      <!-- 学生 -->
+      <div class="user-card stu">
+        <div class="user-avatar">学</div>
+        <div class="user-role">在校学生</div>
+        <div class="user-name">学生本人</div>
+        <ul class="user-features">
+          <li>查看自己的五育成长画像</li>
+          <li>了解各维度分数与近三学期趋势</li>
+          <li>查看学业进度与毕业要求达成</li>
+          <li>接收个性化学习建议与提醒</li>
+          <li>浏览成长标签与关键事件时间轴</li>
+        </ul>
+      </div>
+      <!-- 辅导员 -->
+      <div class="user-card cou">
+        <div class="user-avatar">导</div>
+        <div class="user-role">辅导员 / 班主任</div>
+        <div class="user-name">辅导员</div>
+        <ul class="user-features">
+          <li>总览所带班级整体学生状态</li>
+          <li>按7类场景查看重点关注名单</li>
+          <li>深入查看单个学生画像详情</li>
+          <li>查看识别原因与数据依据说明</li>
+          <li>分析班级群体五育结构与趋势</li>
+        </ul>
+      </div>
+      <!-- 学院 -->
+      <div class="user-card dea">
+        <div class="user-avatar">院</div>
+        <div class="user-role">学院教务 / 学工管理</div>
+        <div class="user-name">学院管理层</div>
+        <ul class="user-features">
+          <li>掌握全院学生整体状态与五育态势</li>
+          <li>按专业 / 年级多维分层分析</li>
+          <li>深入7类专题关注情况</li>
+          <li>评估支持干预的改善成效</li>
+          <li>导出学院学生工作分析报告</li>
+        </ul>
+      </div>
+      <!-- 领导 -->
+      <div class="user-card lea">
+        <div class="user-avatar">校</div>
+        <div class="user-role">学校领导 / 学生处</div>
+        <div class="user-name">学校管理层</div>
+        <ul class="user-features">
+          <li>全校学生工作数据驾驶舱</li>
+          <li>各学院横向关注规模对比</li>
+          <li>全校五育发展整体评估</li>
+          <li>关注规模趋势研判与预判</li>
+          <li>辅助制定学期学生工作部署</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- 权限说明 -->
+    <div class="perm-box">
+      <div class="perm-pyramid">
+        <div class="perm-level">
+          <div class="perm-bar" style="width:80px;background:#d97706;">学校领导</div>
+          <div class="perm-note">全校聚合数据 · 最宏观</div>
+        </div>
+        <div class="perm-level">
+          <div class="perm-bar" style="width:130px;background:#7c3aed;">学院管理层</div>
+          <div class="perm-note">本院汇总 · 不看个人详情</div>
+        </div>
+        <div class="perm-level">
+          <div class="perm-bar" style="width:180px;background:#2563eb;">辅导员</div>
+          <div class="perm-note">名下学生 · 不跨班查看</div>
+        </div>
+        <div class="perm-level">
+          <div class="perm-bar" style="width:230px;background:#1a7f5c;">学生本人</div>
+          <div class="perm-note">仅限自己数据 · 最具体</div>
+        </div>
+      </div>
+      <div class="perm-desc">
+        <h4>🔐 权限分级原则</h4>
+        <p>学生只能看自己的数据；辅导员只能看名下学生，看不到其他班级；学院管理层可看本院汇总，不看个人详情；学校管理层看全校聚合数据。</p>
+        <p style="margin-top:10px;font-size:12px;color:var(--gray-500);">越接近决策层，看到的越宏观；越接近学生，看到的越具体。所有数据在校内封闭环境处理，不对外共享。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== 3. 功能模块 ===== -->
+<section class="section section-white" id="modules">
+  <div class="section-inner">
+    <div class="section-eyebrow">🧩 功能模块</div>
+    <h2 class="section-title">平台包含哪些功能？</h2>
+    <p class="section-sub">平台共 <strong>14 个功能页面</strong>，按用户角色分组，覆盖从个人成长感知到全校决策支持的完整链路。</p>
+
+    <div class="module-tabs">
+      <button class="mtab active green" onclick="switchModule(this,'stu','green')">🎓 学生端</button>
+      <button class="mtab" onclick="switchModule(this,'cou','blue')">👨‍💼 辅导员端</button>
+      <button class="mtab" onclick="switchModule(this,'dea','purple')">🏛️ 学院管理端</button>
+      <button class="mtab" onclick="switchModule(this,'lea','orange')">🏫 学校领导端</button>
+    </div>
+
+    <!-- 学生端 -->
+    <div class="module-panel active" id="mp-stu">
+      <div class="module-layout">
+        <div class="module-sidebar ms-green">
+          <div>
+            <div class="ms-icon">🎓</div>
+            <h3>学生端</h3>
+            <p class="ms-sub">让学生"看见自己"，了解德智体美劳全方位成长状态，接收个性化建议与提醒，主动规划个人发展。</p>
+          </div>
+          <a href="student-home.html" class="ms-link">进入学生首页 →</a>
+        </div>
+        <div class="module-main">
+          <div class="mod-grid">
+            <div class="mod-card green">
+              <div class="mc-icon">🏠</div>
+              <div class="mc-name">成长首页</div>
+              <div class="mc-desc">五育雷达概览、本学期近期提醒、推荐资源卡片、成长关键事件时间轴</div>
+              <a href="student-home.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card green">
+              <div class="mc-icon">🪪</div>
+              <div class="mc-name">我的成长画像</div>
+              <div class="mc-desc">个人基本信息聚合、六维成长概览、成长标签云、个人成长时间轴</div>
+              <a href="student-profile.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card green">
+              <div class="mc-icon">⭐</div>
+              <div class="mc-name">五育评价</div>
+              <div class="mc-desc">德智体美劳五维度详情指标、近三学期趋势交互折线图、分维度提升建议</div>
+              <a href="student-wuyu.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card green">
+              <div class="mc-icon">📚</div>
+              <div class="mc-name">学业发展</div>
+              <div class="mc-desc">绩点趋势图、本学期课程成绩表、毕业要求各模块达成进度、学习投入分析</div>
+              <a href="student-academic.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card green">
+              <div class="mc-icon">🔔</div>
+              <div class="mc-name">提醒与推荐</div>
+              <div class="mc-desc">分类提醒列表、个性化成长建议、推荐学习资源、推荐依据透明说明</div>
+              <a href="student-remind.html" class="mc-link">查看页面 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 辅导员端 -->
+    <div class="module-panel" id="mp-cou">
+      <div class="module-layout">
+        <div class="module-sidebar ms-blue">
+          <div>
+            <div class="ms-icon">👨‍💼</div>
+            <h3>辅导员端</h3>
+            <p class="ms-sub">精准识别需要支持的学生，高效开展班级学生工作。从总览到详情，从识别到跟进，一站式支持辅导员日常工作。</p>
+          </div>
+          <a href="counselor-overview.html" class="ms-link">进入带班总览 →</a>
+        </div>
+        <div class="module-main">
+          <div class="mod-grid">
+            <div class="mod-card blue">
+              <div class="mc-icon">📋</div>
+              <div class="mc-name">带班总览</div>
+              <div class="mc-desc">班级KPI数据、5类场景关注入口、班级五育雷达、关注规模趋势、重点学生速览</div>
+              <a href="counselor-overview.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card blue">
+              <div class="mc-icon">📌</div>
+              <div class="mc-name">重点关注名单</div>
+              <div class="mc-desc">7类场景分类名单、原因说明抽屉展开、跟进状态标注、学生卡片快速访问</div>
+              <a href="counselor-list.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card blue">
+              <div class="mc-icon">🔍</div>
+              <div class="mc-name">学生画像详情</div>
+              <div class="mc-desc">管理视角个人完整画像、规则命中数据说明、系统推荐支持建议、跟进记录</div>
+              <a href="student-detail.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card blue">
+              <div class="mc-icon">📊</div>
+              <div class="mc-name">班级群体分析</div>
+              <div class="mc-desc">五育结构分布、宿舍关注热力图、学业分层结构、校园参与结构、纵向学期对比</div>
+              <a href="counselor-class.html" class="mc-link">查看页面 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 学院端 -->
+    <div class="module-panel" id="mp-dea">
+      <div class="module-layout">
+        <div class="module-sidebar ms-purple">
+          <div>
+            <div class="ms-icon">🏛️</div>
+            <h3>学院管理端</h3>
+            <p class="ms-sub">全院群体态势分析，深入7类专题，评估支持干预成效，为学院学生工作部署提供数据依据。</p>
+          </div>
+          <a href="college-analysis.html" class="ms-link">进入学院分析 →</a>
+        </div>
+        <div class="module-main">
+          <div class="mod-grid">
+            <div class="mod-card purple">
+              <div class="mc-icon">🌐</div>
+              <div class="mc-name">学院画像分析</div>
+              <div class="mc-desc">学院整体KPI、五育雷达态势、年级与专业多维对比、五育热力矩阵、关注规模趋势</div>
+              <a href="college-analysis.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card purple">
+              <div class="mc-icon">🔬</div>
+              <div class="mc-name">专题深度分析</div>
+              <div class="mc-desc">7类关注专题一键切换、关注规模趋势折线、原因分布拆解、前10重点学生名单</div>
+              <a href="topic-analysis.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card purple">
+              <div class="mc-icon">📈</div>
+              <div class="mc-name">支持成效分析</div>
+              <div class="mc-desc">改善人数趋势、各专题改善率排行、辅导员工作效果对比、典型改善案例摘要</div>
+              <a href="effect-analysis.html" class="mc-link">查看页面 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 领导端 -->
+    <div class="module-panel" id="mp-lea">
+      <div class="module-layout">
+        <div class="module-sidebar ms-orange">
+          <div>
+            <div class="ms-icon">🏫</div>
+            <h3>学校领导端</h3>
+            <p class="ms-sub">全校态势一屏掌握，跨学院横向对比，支持学校层面的学生工作决策与整体部署，数据汇报有理有据。</p>
+          </div>
+          <a href="dashboard.html" class="ms-link">进入驾驶舱 →</a>
+        </div>
+        <div class="module-main">
+          <div class="mod-grid">
+            <div class="mod-card orange">
+              <div class="mc-icon">🚀</div>
+              <div class="mc-name">校级驾驶舱</div>
+              <div class="mc-desc">全校关注规模KPI、五育总体态势、各学院关注对象横向排名、月度趋势折线图</div>
+              <a href="dashboard.html" class="mc-link">查看页面 →</a>
+            </div>
+            <div class="mod-card orange">
+              <div class="mc-icon">📖</div>
+              <div class="mc-name">规则与口径说明</div>
+              <div class="mc-desc">五育评价规则说明手册、7类场景识别口径、数据来源清单、更新频率说明</div>
+              <a href="rules.html" class="mc-link">查看页面 →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== 4. 使用流程 ===== -->
+<section class="section section-gray" id="flow">
+  <div class="section-inner">
+    <div class="section-eyebrow">🔄 使用流程</div>
+    <h2 class="section-title">各角色如何使用平台？</h2>
+    <p class="section-sub">平台为四类角色设计了各自清晰的使用路径，从登录到采取行动，每一步都有明确引导与数据支撑。</p>
+
+    <div class="flow-role-tabs">
+      <button class="frtab active green" onclick="switchFlow(this,'stu','green')">🎓 学生</button>
+      <button class="frtab" onclick="switchFlow(this,'cou','blue')">👨‍💼 辅导员</button>
+      <button class="frtab" onclick="switchFlow(this,'dea','purple')">🏛️ 学院管理层</button>
+      <button class="frtab" onclick="switchFlow(this,'lea','orange')">🏫 学校领导</button>
+    </div>
+
+    <!-- 学生流程 -->
+    <div class="flow-panel active" id="fp-stu">
+      <div class="flow-timeline">
+        <div class="flow-item">
+          <div class="fi-dot green">1</div>
+          <div class="fi-content">
+            <div class="fi-tag green">登录入口</div>
+            <h4>统一身份认证登录 · 进入成长首页</h4>
+            <p>以学号登录，直接进入个人成长首页，看到五育雷达概览和近期关键提醒，第一眼感知当前整体状态。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot green">2</div>
+          <div class="fi-content">
+            <div class="fi-tag green">核心功能</div>
+            <h4>查看五育评价详情</h4>
+            <p>进入"五育评价"页，查看德智体美劳各项指标明细分数与来源说明，对比近三学期趋势变化，了解自身优势与短板。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot green">3</div>
+          <div class="fi-content">
+            <div class="fi-tag green">重点关注</div>
+            <h4>了解学业发展状态</h4>
+            <p>查看绩点趋势、本学期课程成绩列表、毕业要求各模块的达成进度，识别哪些模块需要加强推进。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot green">4</div>
+          <div class="fi-content">
+            <div class="fi-tag green">个性化服务</div>
+            <h4>接收个性化建议与推荐</h4>
+            <p>在"提醒与推荐"页查看系统基于数据推送的学习建议和活动推荐，每条推荐附有明确理由，不是黑箱推送。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot green">5</div>
+          <div class="fi-content">
+            <div class="fi-tag green">成长感知</div>
+            <h4>浏览成长画像全貌</h4>
+            <p>在"我的成长画像"页查看六维成长概览、自动生成的成长标签和关键事件时间轴，感知自己的成长轨迹与阶段特征。</p>
+          </div>
+        </div>
+      </div>
+      <div class="flow-outcome green">
+        <div class="fo-icon">🎯</div>
+        <div class="fo-text"><strong>预期效果：</strong>学生从被动接受到主动了解自己的成长状态，能用数据理解自己的强项与需要提升的方向，增强自我管理意识。</div>
+      </div>
+    </div>
+
+    <!-- 辅导员流程 -->
+    <div class="flow-panel" id="fp-cou">
+      <div class="flow-timeline">
+        <div class="flow-item">
+          <div class="fi-dot blue">1</div>
+          <div class="fi-content">
+            <div class="fi-tag blue">每周例行</div>
+            <h4>登录 · 查看带班总览</h4>
+            <p>登录后进入班级总览页，一眼看到本班各场景关注人数、五育状态分布和近期变化，2分钟掌握整体动态。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot blue">2</div>
+          <div class="fi-content">
+            <div class="fi-tag blue">精准识别</div>
+            <h4>进入重点关注名单</h4>
+            <p>按场景（学业/生活/保障/新生/融入/毕业/优势）筛选需要关注的学生，查看每位学生的关注原因及数据依据。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot blue">3</div>
+          <div class="fi-content">
+            <div class="fi-tag blue">深入了解</div>
+            <h4>查看学生画像详情</h4>
+            <p>点击具体学生，查看该生全面画像、数据命中规则的逻辑解释，以及系统推荐的谈话切入点和支持建议。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot blue">4</div>
+          <div class="fi-content">
+            <div class="fi-tag blue">付诸行动</div>
+            <h4>开展实际谈话支持</h4>
+            <p>结合画像信息与学生进行有准备的面谈，形成研判后在系统标注跟进状态，记录干预过程。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot blue">5</div>
+          <div class="fi-content">
+            <div class="fi-tag blue">定期复盘</div>
+            <h4>班级群体分析</h4>
+            <p>每月查看班级群体分析，掌握整体五育结构、宿舍分布、学业分层和纵向变化趋势，发现系统性问题。</p>
+          </div>
+        </div>
+      </div>
+      <div class="flow-outcome blue">
+        <div class="fo-icon">🎯</div>
+        <div class="fo-text"><strong>预期效果：</strong>辅导员从依赖感知和经验，转变为基于数据的精准关注，将有限精力精准用在真正需要支持的学生身上，干预及时性和针对性显著提升。</div>
+      </div>
+    </div>
+
+    <!-- 学院流程 -->
+    <div class="flow-panel" id="fp-dea">
+      <div class="flow-timeline">
+        <div class="flow-item">
+          <div class="fi-dot purple">1</div>
+          <div class="fi-content">
+            <div class="fi-tag purple">宏观掌握</div>
+            <h4>进入学院画像分析总览</h4>
+            <p>查看全院学生KPI数据、五育整体态势雷达图和年级/专业对比，快速掌握本院学生工作全局状态。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot purple">2</div>
+          <div class="fi-content">
+            <div class="fi-tag purple">专题深入</div>
+            <h4>切换7类专题深度分析</h4>
+            <p>针对学业进展、生活规律、保障支持等专题，查看各专题关注人数规模、趋势折线图、原因拆解和人群分布。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot purple">3</div>
+          <div class="fi-content">
+            <div class="fi-tag purple">研判核实</div>
+            <h4>查看全院重点关注名单</h4>
+            <p>从专题分析页进入重点名单，对高度关注学生进行学院层面的二次研判，协调专项资源支持。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot purple">4</div>
+          <div class="fi-content">
+            <div class="fi-tag purple">成效评估</div>
+            <h4>查看支持成效分析</h4>
+            <p>在"支持成效分析"页查看改善趋势、各辅导员工作效果对比，发现管理薄弱点并针对性改进。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot purple">5</div>
+          <div class="fi-content">
+            <div class="fi-tag purple">决策汇报</div>
+            <h4>导出报告 · 支撑决策</h4>
+            <p>生成学院学生状态分析报告，支撑学工工作汇报、专题研讨或向学校汇报，做到"有数有据有分析"。</p>
+          </div>
+        </div>
+      </div>
+      <div class="flow-outcome purple">
+        <div class="fo-icon">🎯</div>
+        <div class="fo-text"><strong>预期效果：</strong>学院管理层从依赖人工汇总报表转变为实时数据驱动决策，学生工作部署更有针对性，资源分配更加精准高效。</div>
+      </div>
+    </div>
+
+    <!-- 领导流程 -->
+    <div class="flow-panel" id="fp-lea">
+      <div class="flow-timeline">
+        <div class="flow-item">
+          <div class="fi-dot orange">1</div>
+          <div class="fi-content">
+            <div class="fi-tag orange">一页总览</div>
+            <h4>进入全校驾驶舱</h4>
+            <p>登录后直达驾驶舱，全校关注人数、五育均值、重点事项和各学院排名情况一页呈现，3分钟掌握全局。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot orange">2</div>
+          <div class="fi-content">
+            <div class="fi-tag orange">横向对比</div>
+            <h4>查看各学院横向对比</h4>
+            <p>查看各学院关注规模、五育水平对比排名，识别整体偏弱学院和需要重点关注的维度，发现系统性问题。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot orange">3</div>
+          <div class="fi-content">
+            <div class="fi-tag orange">趋势研判</div>
+            <h4>研判关注规模趋势</h4>
+            <p>通过月度关注规模趋势折线图，研判学期内学生状态的周期性规律（如考试前后波动）和异常事件影响。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot orange">4</div>
+          <div class="fi-content">
+            <div class="fi-tag orange">专题跳转</div>
+            <h4>快速进入专题深钻</h4>
+            <p>跳转到各学院专题分析，快速了解全校特定场景（毕业风险、新生适应等）的整体情况，聚焦重点问题。</p>
+          </div>
+        </div>
+        <div class="flow-item">
+          <div class="fi-dot orange">5</div>
+          <div class="fi-content">
+            <div class="fi-tag orange">战略部署</div>
+            <h4>有据可依发布工作部署</h4>
+            <p>基于平台数据洞察，有理有据地发布工作指示、调整政策、分配支持资源，学生工作决策告别"拍脑袋"。</p>
+          </div>
+        </div>
+      </div>
+      <div class="flow-outcome orange">
+        <div class="fo-icon">🎯</div>
+        <div class="fo-text"><strong>预期效果：</strong>学校管理层对全校学生工作状态实现实时掌握，工作部署从经验判断转变为数据驱动，整体学生工作质量和响应效率显著提升。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== 5. 数据来源 ===== -->
+<section class="section section-white" id="data">
+  <div class="section-inner">
+    <div class="section-eyebrow">🗄️ 数据来源</div>
+    <h2 class="section-title">平台融合哪些数据？</h2>
+    <p class="section-sub">平台整合高校内 <strong>8 类业务系统数据</strong>，经清洗整合后形成学生多维成长画像，全程在校内数据环境中处理，不依赖任何外部数据。</p>
+
+    <div class="data-visual">
+      <!-- 左：数据源卡片 -->
+      <div class="data-cards-grid">
+        <div class="dcard c1">
+          <div class="dc-ico">📐</div>
+          <h4>教务系统</h4>
+          <div class="dc-tags">
+            <span class="dc-tag">学籍信息</span>
+            <span class="dc-tag">课程成绩</span>
+            <span class="dc-tag">修读学分</span>
+            <span class="dc-tag">GPA绩点</span>
+            <span class="dc-tag">挂科记录</span>
+            <span class="dc-tag">毕业达成率</span>
+          </div>
+        </div>
+        <div class="dcard c2">
+          <div class="dc-ico">🎭</div>
+          <h4>学工 / 团委系统</h4>
+          <div class="dc-tags">
+            <span class="dc-tag">奖惩记录</span>
+            <span class="dc-tag">荣誉奖学金</span>
+            <span class="dc-tag">志愿服务</span>
+            <span class="dc-tag">社团活动</span>
+            <span class="dc-tag">第二课堂</span>
+            <span class="dc-tag">班级活动</span>
+          </div>
+        </div>
+        <div class="dcard c3">
+          <div class="dc-ico">🏃</div>
+          <h4>体育 / 健康系统</h4>
+          <div class="dc-tags">
+            <span class="dc-tag">体测成绩</span>
+            <span class="dc-tag">体育课成绩</span>
+            <span class="dc-tag">校园跑记录</span>
+            <span class="dc-tag">场馆使用</span>
+            <span class="dc-tag">运动规律性</span>
+          </div>
+        </div>
+        <div class="dcard c4">
+          <div class="dc-ico">🎨</div>
+          <h4>文化艺术系统</h4>
+          <div class="dc-tags">
+            <span class="dc-tag">艺术选修课</span>
+            <span class="dc-tag">文化活动</span>
+            <span class="dc-tag">美育学分</span>
+            <span class="dc-tag">文艺演出</span>
+          </div>
+        </div>
+        <div class="dcard c5">
+          <div class="dc-ico">💰</div>
+          <h4>资助 / 财务系统</h4>
+          <div class="dc-tags">
+            <span class="dc-tag">校园消费</span>
+            <span class="dc-tag">餐饮消费</span>
+            <span class="dc-tag">资助情况</span>
+            <span class="dc-tag">消费趋势</span>
+          </div>
+        </div>
+        <div class="dcard c6">
+          <div class="dc-ico">🏠</div>
+          <h4>宿舍 / 后勤系统</h4>
+          <div class="dc-tags">
+            <span class="dc-tag">在宿规律</span>
+            <span class="dc-tag">门禁记录</span>
+            <span class="dc-tag">宿舍分配</span>
+            <span class="dc-tag">夜归记录</span>
+          </div>
+        </div>
+        <div class="dcard c7">
+          <div class="dc-ico">📖</div>
+          <h4>图书馆系统</h4>
+          <div class="dc-tags">
+            <span class="dc-tag">到馆频次</span>
+            <span class="dc-tag">借阅记录</span>
+            <span class="dc-tag">自习时长</span>
+            <span class="dc-tag">夜晚学习</span>
+          </div>
+        </div>
+        <div class="dcard c8">
+          <div class="dc-ico">🎓</div>
+          <h4>就业 / 迎新系统</h4>
+          <div class="dc-tags">
+            <span class="dc-tag">新生信息</span>
+            <span class="dc-tag">实习记录</span>
+            <span class="dc-tag">生涯参与</span>
+            <span class="dc-tag">就业意向</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右：数据流向 -->
+      <div class="data-flow-panel">
+        <div class="dfp-title">
+          <span>🔄</span> 数据处理流向
+        </div>
+        <div class="flow-chain">
+          <div class="fc-node">
+            <div class="fn-icon">🏢</div>
+            <div>
+              <h5>各业务系统原始数据</h5>
+              <p>8类校内系统，每日定时同步</p>
+            </div>
+          </div>
+          <div class="fc-arrow-wrap"><div class="fc-arr">↓</div></div>
+          <div class="fc-node">
+            <div class="fn-icon">🧹</div>
+            <div>
+              <h5>数据清洗与去重脱敏</h5>
+              <p>统一格式、去除异常值、关键字段脱敏处理</p>
+            </div>
+          </div>
+          <div class="fc-arrow-wrap"><div class="fc-arr">↓</div></div>
+          <div class="fc-node">
+            <div class="fn-icon">⚙️</div>
+            <div>
+              <h5>指标计算与规则引擎</h5>
+              <p>按五育框架加权计算维度分值，7类场景规则判断</p>
+            </div>
+          </div>
+          <div class="fc-arrow-wrap"><div class="fc-arr">↓</div></div>
+          <div class="fc-node">
+            <div class="fn-icon">🗂️</div>
+            <div>
+              <h5>学生成长画像库</h5>
+              <p>以学号为键，多维成长档案动态更新</p>
+            </div>
+          </div>
+          <div class="fc-arrow-wrap"><div class="fc-arr">↓</div></div>
+          <div class="fc-node">
+            <div class="fn-icon">🔍</div>
+            <div>
+              <h5>场景识别与分类引擎</h5>
+              <p>自动识别7类关注场景，生成关注名单与建议</p>
+            </div>
+          </div>
+          <div class="fc-arrow-wrap"><div class="fc-arr">↓</div></div>
+          <div class="fc-node">
+            <div class="fn-icon">📱</div>
+            <div>
+              <h5>分角色可视化展示层</h5>
+              <p>4类用户角色，各自看到权限内数据</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="data-notes">
+          <div class="data-note">📅 每日同步 / 每月汇总</div>
+          <div class="data-note">🔒 全程在校内环境处理，不出校</div>
+          <div class="data-note">📏 按学号关联，不引入外部数据</div>
+          <div class="data-note">🔐 角色分级权限隔离</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== 6. 业务价值 ===== -->
+<section class="section section-gray" id="value">
+  <div class="section-inner">
+    <div class="section-eyebrow">💎 业务价值</div>
+    <h2 class="section-title">平台能带来什么价值？</h2>
+    <p class="section-sub">平台通过数据驱动，为高校各层级学生工作带来实质性效率提升、管理质量改善与育人效果增强。</p>
+
+    <div class="value-grid">
+      <div class="vcard v1">
+        <div class="vc-icon">⏰</div>
+        <div class="vc-title">提早识别，及时介入</div>
+        <div class="vc-desc">通过多维指标联合判断，将学生出现问题信号的识别时间提前，由被动响应转变为主动关注，为有效干预争取时间窗口。</div>
+        <div class="vc-metric">
+          <div class="vcm-item"><span class="vcm-num">2-4</span> 周早识别</div>
+          <div class="vcm-item">漏报率显著降低</div>
+        </div>
+      </div>
+      <div class="vcard v2">
+        <div class="vc-icon">🎯</div>
+        <div class="vc-title">精准画像，定向支持</div>
+        <div class="vc-desc">辅导员不再依赖模糊感知，基于7大场景的数据分类精准找到真正需要支持的学生，将有限精力用在刀刃上。</div>
+        <div class="vc-metric">
+          <div class="vcm-item"><span class="vcm-num">7</span> 类场景精细分类</div>
+          <div class="vcm-item">工作聚焦度大幅提升</div>
+        </div>
+      </div>
+      <div class="vcard v3">
+        <div class="vc-icon">📈</div>
+        <div class="vc-title">数据留痕，成效可见</div>
+        <div class="vc-desc">跟进记录、改善趋势、辅导员工作成效均有数据沉淀，学生工作从"说不清楚"变成"有数有据"，支撑工作总结与管理优化。</div>
+        <div class="vc-metric">
+          <div class="vcm-item">工作记录 <span class="vcm-num">100%</span> 可追溯</div>
+          <div class="vcm-item">成效趋势可量化</div>
+        </div>
+      </div>
+      <div class="vcard v4">
+        <div class="vc-icon">🌱</div>
+        <div class="vc-title">五育并举，全面发展</div>
+        <div class="vc-desc">打破仅关注学业成绩的片面视角，将德智体美劳五育纳入整体成长评价，引导学生与辅导员双向关注全面发展。</div>
+        <div class="vc-metric">
+          <div class="vcm-item"><span class="vcm-num">5</span> 育均衡评价</div>
+          <div class="vcm-item">覆盖全成长维度</div>
+        </div>
+      </div>
+      <div class="vcard v5">
+        <div class="vc-icon">🔄</div>
+        <div class="vc-title">层层贯通，协同高效</div>
+        <div class="vc-desc">学生→辅导员→学院→学校四级数据纵向贯通，信息传递不再依赖层层汇报，协同响应效率倍增，形成完整闭环。</div>
+        <div class="vc-metric">
+          <div class="vcm-item"><span class="vcm-num">4</span> 级纵向联通</div>
+          <div class="vcm-item">实时数据同步</div>
+        </div>
+      </div>
+      <div class="vcard v6">
+        <div class="vc-icon">📋</div>
+        <div class="vc-title">减轻负担，提升体验</div>
+        <div class="vc-desc">辅导员告别手工汇总，学院管理层无需逐一核实，所有人在统一平台快速获取所需信息，整体工作效率大幅提升。</div>
+        <div class="vc-metric">
+          <div class="vcm-item">手工汇总减少 <span class="vcm-num">60%</span></div>
+          <div class="vcm-item">随时随地可查</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ===== 7. 设计原则 ===== -->
+<section class="section section-white" id="principles">
+  <div class="section-inner">
+    <div class="section-eyebrow">🛡️ 设计原则</div>
+    <h2 class="section-title">我们如何保障平台的合理使用？</h2>
+    <p class="section-sub">平台在设计之初即确立五项核心原则，确保数据的合理使用和育人导向始终不偏移，让技术真正服务于人。</p>
+
+    <div class="principles-grid">
+      <div class="pcard">
+        <div class="pc-icon">🌱</div>
+        <div class="pc-title">育人为本</div>
+        <div class="pc-desc">以学生成长发展为中心，不以管控为目的，所有分析功能服务于学生的发展支持而非惩处评判。</div>
+      </div>
+      <div class="pcard">
+        <div class="pc-icon">🔍</div>
+        <div class="pc-title">分析辅助</div>
+        <div class="pc-desc">平台提供数据线索和分析参考，最终判断和行动决策由教育工作者结合实际情况负责，不做黑箱定论。</div>
+      </div>
+      <div class="pcard">
+        <div class="pc-icon">📣</div>
+        <div class="pc-title">措辞合规</div>
+        <div class="pc-desc">使用"关注""支持"等正向词汇，避免"风险""预警""问题学生"等标签化、污名化表达。</div>
+      </div>
+      <div class="pcard">
+        <div class="pc-icon">🔐</div>
+        <div class="pc-title">权限分级</div>
+        <div class="pc-desc">严格按角色控制数据访问范围，学生数据不越权查看，敏感信息做到最小化暴露与保护。</div>
+      </div>
+      <div class="pcard">
+        <div class="pc-icon">💬</div>
+        <div class="pc-title">可解释性</div>
+        <div class="pc-desc">每条识别结果均附有数据依据说明，每条建议解释推荐理由，让使用者知道"为什么"。</div>
+      </div>
+    </div>
+
+    <div class="info-box" style="margin-top:28px;">
+      <div class="ib-icon">📌</div>
+      <p><strong>一句话定位：</strong>学生成长画像平台是面向高校学生工作的<strong>数据辅助决策应用</strong>，帮助辅导员、学院管理层和学校领导"用数据看学生、用数据管工作"，提升学生支持工作的精准性、及时性与系统性，同时帮助学生更好地了解自身成长状态，主动规划发展方向。</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta-section">
+  <div class="cta-inner">
+    <div class="cta-title">立即体验完整原型演示</div>
+    <p class="cta-sub">14 个可交互原型页面，覆盖四类角色完整使用流程，帮助您在 30 分钟内全面感受平台的场景与价值</p>
+    <div class="cta-btns">
+      <a href="index.html" class="cta-btn primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5,3 19,12 5,21"/></svg>
+        进入原型演示
+      </a>
+      <a href="student-home.html" class="cta-btn secondary">
+        🎓 学生视角体验
+      </a>
+      <a href="counselor-overview.html" class="cta-btn secondary">
+        👨‍💼 辅导员视角体验
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <span>学生成长画像与精准支持分析平台</span>
+  <span>·</span>
+  <span>场景定位说明文档</span>
+  <span>·</span>
+  <span>v1.1</span>
+  <span>·</span>
+  <span>2026年4月</span>
+</footer>
+
+<script>
+  /* ===== Module Tab Switch ===== */
+  function switchModule(btn, id, color) {
+    document.querySelectorAll('.mtab').forEach(b => {
+      b.classList.remove('active', 'green', 'blue', 'purple', 'orange');
+    });
+    document.querySelectorAll('.module-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active', color);
+    document.getElementById('mp-' + id).classList.add('active');
+  }
+
+  /* ===== Flow Tab Switch ===== */
+  function switchFlow(btn, id, color) {
+    document.querySelectorAll('.frtab').forEach(b => {
+      b.classList.remove('active', 'green', 'blue', 'purple', 'orange');
+    });
+    document.querySelectorAll('.flow-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active', color);
+    document.getElementById('fp-' + id).classList.add('active');
+  }
+
+  /* ===== Smooth Scroll ===== */
+  document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+      const t = document.querySelector(a.getAttribute('href'));
+      if (t) { e.preventDefault(); t.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+
+  /* ===== Nav Active on Scroll ===== */
+  const navLinks = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('section[id]');
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const id = e.target.id;
+        navLinks.forEach(l => {
+          const active = l.getAttribute('href') === '#' + id;
+          l.classList.toggle('active', active);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  sections.forEach(s => obs.observe(s));
+
+  /* ===== Scroll Fade-in ===== */
+  const fadeTargets = document.querySelectorAll(
+    '.user-card, .vcard, .pcard, .dcard, .mod-card, .pain-item, .solution-step, .fi-content'
+  );
+  const fadeObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.style.opacity = '1';
+        e.target.style.transform = 'translateY(0)';
+        fadeObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.06 });
+  fadeTargets.forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(16px)';
+    el.style.transition = 'opacity .5s ease, transform .5s ease';
+    fadeObs.observe(el);
+  });
+</script>
+</body>
+</html>
